@@ -326,6 +326,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </style>
 </head><body>
 
+<p style="font-size: 0.9em; color: #666;">Last updated: {{.Generated}}</p>
 <h2>Intermittent Failures</h2>
 <ul class="buglist">
 {{range .Intermittents}}
@@ -362,13 +363,15 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </body></html>`
 
     // Prepare data for template
-    data := struct {
-        Intermittents []Result
-        Permas        []PermaBug
-    }{
-        Intermittents: results,
-        Permas:        permas,
-    }
+data := struct {
+    Intermittents []Result
+    Permas        []PermaBug
+    Generated     string
+}{
+    Intermittents: results,
+    Permas:        permas,
+    Generated:     time.Now().UTC().Format("2006-01-02 15:04 MST"),
+}
 
     f, err := os.Create(outputHTML)
     if err != nil {
