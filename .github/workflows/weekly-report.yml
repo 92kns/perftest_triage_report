@@ -1,0 +1,32 @@
+name: Generate Bugzilla Report
+
+on:
+  schedule:
+    - cron: '0 9 * * 2'  # every Monday at 09:00 UTC
+  workflow_dispatch:      # manual run button
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🛠 Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: 🔧 Build and run report
+        run: |
+          mkdir -p output
+          go run main.go
+          mv report.html output/index.html
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
