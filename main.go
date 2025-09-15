@@ -100,9 +100,6 @@ func main() {
     writeHTMLReport(results, permas)
     fmt.Println("✅ Report written to", outputHTML)
     // openInBrowser(outputHTML)
-    _ = os.Mkdir("output", 0755) // no error if it exists
-    _ = os.Rename(outputHTML, "output/index.html")
-
 
 
 }
