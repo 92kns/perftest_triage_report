@@ -1,4 +1,4 @@
-name: Generate Bugzilla Report
+name: Generate Bugzilla PerfTest Triage Report
 
 on:
   schedule:
