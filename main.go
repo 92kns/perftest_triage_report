@@ -120,7 +120,11 @@ func fetchIntermittentBugs() []Bug {
 	if err != nil {
 		log.Fatalf("fetch intermittents failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("warning: error closing body: %v", err)
+		}
+	}()
 
 	var out BugListResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
@@ -145,7 +149,11 @@ func fetchPermaBugs() []PermaBug {
 	if err != nil {
 		log.Fatalf("fetch failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("warning: error closing body: %v", err)
+		}
+	}()
 
 	var out BugListResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
@@ -209,7 +217,11 @@ func analyzeBug(bug Bug, cutoff time.Time) *Result {
 	if err != nil {
 		return nil
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("warning: error closing body: %v", err)
+		}
+	}()
 
 	body, _ := io.ReadAll(resp.Body)
 	var cb CommentBlock
@@ -378,7 +390,11 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 	if err != nil {
 		log.Fatalf("create file: %v", err)
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Printf("warning: error closing file: %v", err)
+		}
+	}()
 
 	t := template.Must(template.New("report").Parse(tmpl))
 	if err := t.Execute(f, data); err != nil {
