@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"html/template"
 	"io"
@@ -82,6 +83,8 @@ func main() {
 	defer func() {
 		fmt.Printf("⏱ Report generated in %s\n", time.Since(start))
 	}()
+	noOpen := flag.Bool("no-open", false, "Disable opening browser after generating report")
+	flag.Parse()
 	fmt.Println("Generating Bugzilla report...")
 	lastWeek := time.Now().AddDate(0, 0, -DaysBack)
 
@@ -99,7 +102,9 @@ func main() {
 
 	writeHTMLReport(results, permas)
 	fmt.Println("✅ Report written to", outputHTML)
-	// openInBrowser(outputHTML)
+	if !*noOpen {
+		openInBrowser(outputHTML)
+	}
 
 }
 
