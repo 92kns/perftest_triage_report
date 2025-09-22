@@ -1,33 +1,35 @@
 name: Generate Bugzilla PerfTest Triage Report
 
+# Run when pushed to main branch, otherwise update once
+# a day at 0900 UTC
 on:
   push:
     branches:
       - main
   schedule:
-    - cron: '0 9 * * *'  # every Tuesday at 09:00 UTC
-  workflow_dispatch:      # manual run button
+    - cron: '0 9 * * *'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🛠 Set up Go
+      - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.21'
 
-      - name: 🔧 Build and run report
+      - name: Build and run report
         run: |
           mkdir -p output
           go run main.go --no-open
           mv report.html output/index.html
 
-      - name: 🚀 Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
