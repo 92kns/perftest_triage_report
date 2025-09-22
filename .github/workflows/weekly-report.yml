@@ -1,6 +1,9 @@
 name: Generate Bugzilla PerfTest Triage Report
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '0 9 * * *'  # every Tuesday at 09:00 UTC
   workflow_dispatch:      # manual run button
