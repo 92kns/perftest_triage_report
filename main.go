@@ -268,7 +268,7 @@ func analyzeBug(bug Bug, cutoff time.Time) *Result {
 		}
 	}
 
-	if max > Threshold {
+	if max >= Threshold {
 		ni := ""
 		for _, flag := range bug.Flags {
 			if flag.Name == "needinfo" && flag.Requestee != "" {
