@@ -345,7 +345,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </head><body>
 
 <p style="font-size: 0.9em; color: #666;">Last updated: {{.Generated}}</p>
-<h2>Intermittent Failures</h2>
+<h2>🟧 Intermittent Failures</h2>
 <ul class="buglist">
 {{range .Intermittents}}
 <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
@@ -369,7 +369,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 
 {{if .Permas}}
   <div class="section">
-    <h2>🟥 Perma Bugs</h2>
+    <h2>🟥 Perma Failures</h2>
     <ul class="buglist">
       {{range .Permas}}
         <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a></li>
