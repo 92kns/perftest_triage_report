@@ -70,6 +70,7 @@ type Result struct {
 	Platforms      []string
 	BreakdownList  []string
 	Needinfo       string
+	GraphLink      string
 }
 
 type PermaBug struct {
@@ -276,6 +277,10 @@ func analyzeBug(bug Bug, cutoff time.Time) *Result {
 				break
 			}
 		}
+		// Get orange factor graph for last 7 days
+		start := time.Now().AddDate(0, 0, -7).Format("2006-01-02")
+		end := time.Now().Format("2006-01-02")
+		graphLink := fmt.Sprintf("https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d", start, end, bug.ID)
 
 		return &Result{
 			ID:             bug.ID,
@@ -285,6 +290,7 @@ func analyzeBug(bug Bug, cutoff time.Time) *Result {
 			Platforms:      platforms,
 			BreakdownList:  breakdownLines,
 			Needinfo:       ni,
+			GraphLink:      graphLink,
 		}
 	}
 	return nil
@@ -350,6 +356,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 {{range .Intermittents}}
 <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
   <ul class="details">
+    <li>(<a href="{{.GraphLink}}" target="_blank">Orange Factor Graph</a>)<li>
     <li>{{.NumberFailures}} Failures</li>
     {{if .Platforms}}
       <li>Platforms:
