@@ -44,6 +44,7 @@ type Bug struct {
 		Requestee string `json:"requestee"`
 		Setter    string `json:"setter"`
 	} `json:"flags,omitempty"`
+	AssignedTo string `json:"assigned_to"`
 }
 
 type BugListResponse struct {
@@ -71,6 +72,7 @@ type Result struct {
 	BreakdownList  []string
 	Needinfo       string
 	GraphLink      string
+	Assignee       string
 }
 
 type PermaBug struct {
@@ -117,6 +119,8 @@ func fetchIntermittentBugs() []Bug {
 	params.Set("keywords", "intermittent-failure")
 	params.Set("keywords_type", "allwords")
 	params.Set("resolution", "---")
+	params.Set("include_fields", "id,summary,flags,assigned_to")
+
 	for _, c := range components {
 		params.Add("component", c)
 	}
@@ -282,6 +286,12 @@ func analyzeBug(bug Bug, cutoff time.Time) *Result {
 		end := time.Now().Format("2006-01-02")
 		graphLink := fmt.Sprintf("https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d", start, end, bug.ID)
 
+		// get assignee
+		assigned := bug.AssignedTo
+		if assigned == "nobody@mozilla.org" || assigned == "" {
+			assigned = ""
+		}
+
 		return &Result{
 			ID:             bug.ID,
 			Link:           fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", bug.ID),
@@ -291,6 +301,7 @@ func analyzeBug(bug Bug, cutoff time.Time) *Result {
 			BreakdownList:  breakdownLines,
 			Needinfo:       ni,
 			GraphLink:      graphLink,
+			Assignee:       bug.AssignedTo,
 		}
 	}
 	return nil
@@ -368,6 +379,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
       </li>
     {{end}}
+    {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
     {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
   </ul>
 </li>
