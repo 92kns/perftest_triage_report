@@ -356,7 +356,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 {{range .Intermittents}}
 <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
   <ul class="details">
-    <li>(<a href="{{.GraphLink}}" target="_blank">Orange Factor Graph</a>)<li>
+    <li>(<a href="{{.GraphLink}}" target="_blank">Orange Factor Graph</a>)</li>
     <li>{{.NumberFailures}} Failures</li>
     {{if .Platforms}}
       <li>Platforms:
