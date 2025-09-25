@@ -301,7 +301,7 @@ func analyzeBug(bug Bug, cutoff time.Time) *Result {
 			BreakdownList:  breakdownLines,
 			Needinfo:       ni,
 			GraphLink:      graphLink,
-			Assignee:       bug.AssignedTo,
+			Assignee:       assigned,
 		}
 	}
 	return nil
