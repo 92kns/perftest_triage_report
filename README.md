@@ -4,7 +4,7 @@ A Go CLI tool that automates the generation of weekly performance test triage re
 
 - 🟧 Intermittent test failures with high orangefactor counts (>=20)
 - 🟥 Recent "Perma" bugs based on title substring
-- Repository and platform breakdowns
+- Repository breakdown
 - Assigned developer and NEEDINFO status
 - Outputs a ready-to-copy HTML report
 
