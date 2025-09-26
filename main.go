@@ -397,7 +397,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 {{range .Intermittents}}
 <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
   <ul class="details">
-    <li>(<a href="{{.GraphLink}}" target="_blank">Orange Factor Graph</a>)</li>
+    <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
     <li>{{.NumberFailures}} Failures</li>
     {{if .Platforms}}
       <li>Platforms:
@@ -424,7 +424,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <li>
           <a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
           <ul class="details">
-            <li>(<a href="{{.GraphURL}}" target="_blank">Orange Factor Graph</a>)</li>
+            <li><a href="{{.GraphURL}}" target="_blank">Orange Factor Graph 📈</a></li>
             {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
             {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
           </ul>
