@@ -21,16 +21,16 @@ import (
 )
 
 const (
-	BugzillaURL   = "https://bugzilla.mozilla.org/rest/bug"
-	Threshold     = 20
-	DaysBack      = 7
-	AuthorFilter  = "orangefactor@bots.tld"
-	outputHTML    = "report.html"
+	BugzillaURL  = "https://bugzilla.mozilla.org/rest/bug"
+	Threshold    = 20
+	DaysBack     = 7
+	AuthorFilter = "orangefactor@bots.tld"
+	outputHTML   = "report.html"
 )
 
 var (
-	reBlock = regexp.MustCompile(`(?s)## Repository breakdown:(.*?)## Table(.*?)$`)
-	reNums  = regexp.MustCompile(`:\s*(\d+)`)
+	reBlock       = regexp.MustCompile(`(?s)## Repository breakdown:(.*?)## Table(.*?)$`)
+	reNums        = regexp.MustCompile(`:\s*(\d+)`)
 	maxConcurrent int
 )
 
