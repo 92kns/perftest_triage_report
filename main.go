@@ -153,11 +153,11 @@ func fetchPermaBugs() []PermaBug {
 	params.Set("short_desc", "Perma")
 	params.Set("short_desc_type", "allwordssubstr")
 	params.Set("last_change_time", time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02"))
-	params.Set("include_fields", "id,summary,assigned_to")
+	params.Set("include_fields", "id,summary,assigned_to,flags")
+
 	for _, c := range components {
 		params.Add("component", c)
 	}
-	params.Set("include_fields", "id,summary")
 
 	resp, err := http.Get(BugzillaURL + "?" + params.Encode())
 	if err != nil {
@@ -416,12 +416,14 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <h2>🟥 Perma Failures</h2>
     <ul class="buglist">
       {{range .Permas}}
-        <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a></li>
-	<ul class="details">
+        <li>
+          <a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
+          <ul class="details">
             <li>(<a href="{{.GraphURL}}" target="_blank">Orange Factor Graph</a>)</li>
-            <li> {{if .Assignee}}<br><b>Assigned To</b>: {{.Assignee}}{{end}}</li>
-            <li> {{if .Needinfo}}<br><b>NEEDINFO</b>: {{.Needinfo}}{{end}}</li>
-	</ul>
+            {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
+            {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
+          </ul>
+        </li>
       {{end}}
     </ul>
   </div>
