@@ -76,9 +76,12 @@ type Result struct {
 }
 
 type PermaBug struct {
-	ID      int
-	Link    string
-	Summary string
+	ID       int
+	Link     string
+	Summary  string
+	Assignee string
+	GraphURL string
+	Needinfo string
 }
 
 func main() {
@@ -150,6 +153,7 @@ func fetchPermaBugs() []PermaBug {
 	params.Set("short_desc", "Perma")
 	params.Set("short_desc_type", "allwordssubstr")
 	params.Set("last_change_time", time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02"))
+	params.Set("include_fields", "id,summary,assigned_to")
 	for _, c := range components {
 		params.Add("component", c)
 	}
@@ -172,10 +176,31 @@ func fetchPermaBugs() []PermaBug {
 
 	var permas []PermaBug
 	for _, b := range out.Bugs {
+		ni := ""
+		for _, flag := range b.Flags {
+			if flag.Name == "needinfo" && flag.Requestee != "" {
+				ni = flag.Requestee
+				break
+			}
+		}
+
+		assignee := b.AssignedTo
+		if assignee == "nobody@mozilla.org" {
+			assignee = ""
+		}
+		start := time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02")
+		end := time.Now().Format("2006-01-02")
+		graphURL := fmt.Sprintf(
+			"https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d",
+			start, end, b.ID,
+		)
 		permas = append(permas, PermaBug{
-			ID:      b.ID,
-			Link:    fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
-			Summary: b.Summary,
+			ID:       b.ID,
+			Link:     fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
+			Summary:  b.Summary,
+			Assignee: assignee,
+			GraphURL: graphURL,
+			Needinfo: ni,
 		})
 	}
 	return permas
@@ -392,6 +417,11 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <ul class="buglist">
       {{range .Permas}}
         <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a></li>
+	<ul class="details">
+            <li>(<a href="{{.GraphURL}}" target="_blank">Orange Factor Graph</a>)</li>
+            <li> {{if .Assignee}}<br><b>Assigned To</b>: {{.Assignee}}{{end}}</li>
+            <li> {{if .Needinfo}}<br><b>NEEDINFO</b>: {{.Needinfo}}{{end}}</li>
+	</ul>
       {{end}}
     </ul>
   </div>
