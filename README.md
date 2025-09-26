@@ -72,6 +72,7 @@ HTML includes:
 - Trend reporting/detection via last 2-3 comments
 - Archiving weekly reports in repo history
 - Calls to treeherder database
+- Breakdown by platform
 
 ---
 
