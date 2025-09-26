@@ -31,6 +31,7 @@ const (
 var (
 	reBlock = regexp.MustCompile(`(?s)## Repository breakdown:(.*?)## Table(.*?)$`)
 	reNums  = regexp.MustCompile(`:\s*(\d+)`)
+	maxConcurrent int
 )
 
 var components = []string{"AWSY", "mozperftest", "Performance", "Raptor", "Talos"}
@@ -84,7 +85,6 @@ type PermaBug struct {
 }
 
 func main() {
-	var maxConcurrent int
 	start := time.Now()
 	defer func() {
 		fmt.Printf("⏱ Report generated in %s\n", time.Since(start))
