@@ -79,3 +79,9 @@ HTML includes:
 
 - Original Python script by [@florinbilt](https://github.com/florinbilt)
 - Developed and maintained by [@kshampur](https://github.com/92kns)
+
+---
+
+## License
+
+MIT License. See `LICENSE` file.
