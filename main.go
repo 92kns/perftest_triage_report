@@ -25,7 +25,6 @@ const (
 	Threshold     = 20
 	DaysBack      = 7
 	AuthorFilter  = "orangefactor@bots.tld"
-	maxConcurrent = 15
 	outputHTML    = "report.html"
 )
 
@@ -85,12 +84,18 @@ type PermaBug struct {
 }
 
 func main() {
+	var maxConcurrent int
 	start := time.Now()
 	defer func() {
 		fmt.Printf("⏱ Report generated in %s\n", time.Since(start))
 	}()
+	// setup CLI flags for disabling the automatic HTML report opening in browser and allowing
+	// user to specify number of concurrent fetches
 	noOpen := flag.Bool("no-open", false, "Disable opening browser after generating report")
+	concurrency := flag.Int("concurrency", 15, "Maximum number of concurrent Bugzilla fetches")
 	flag.Parse()
+	maxConcurrent = *concurrency
+
 	fmt.Println("Generating Bugzilla report...")
 	lastWeek := time.Now().AddDate(0, 0, -DaysBack)
 
