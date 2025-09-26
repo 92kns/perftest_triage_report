@@ -26,7 +26,7 @@ jobs:
       - name: Build and run report
         run: |
           mkdir -p output
-          go run main.go --no-open
+          go run main.go --no-open --concurrency 25
           mv report.html output/index.html
 
       - name: Deploy to GitHub Pages
