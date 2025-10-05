@@ -148,7 +148,14 @@ func fetchIntermittentBugs() []Bug {
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		log.Fatalf("bad intermittent bug JSON: %v", err)
 	}
-	return out.Bugs
+	// Filter out perma bugs
+	filtered := make([]Bug, 0, len(out.Bugs))
+	for _, b := range out.Bugs {
+		if !strings.Contains(strings.ToLower(b.Summary), "perma") {
+			filtered = append(filtered, b)
+		}
+	}
+	return filtered
 }
 
 func fetchPermaBugs() []PermaBug {
