@@ -166,6 +166,7 @@ func fetchPermaBugs() []PermaBug {
 	params.Set("short_desc_type", "allwordssubstr")
 	params.Set("last_change_time", time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02"))
 	params.Set("include_fields", "id,summary,assigned_to,flags")
+	params.Set("keywords", "intermittent-failure")
 
 	for _, c := range components {
 		params.Add("component", c)
