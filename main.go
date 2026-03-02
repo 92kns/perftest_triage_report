@@ -132,7 +132,6 @@ func fetchIntermittentBugs() []Bug {
 	for _, c := range components {
 		params.Add("component", c)
 	}
-	params.Set("include_fields", "id,summary,flags")
 
 	resp, err := http.Get(BugzillaURL + "?" + params.Encode())
 	if err != nil {
