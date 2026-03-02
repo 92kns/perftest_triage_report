@@ -399,7 +399,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </style>
 </head><body>
 
-<p style="font-size: 0.9em; color: #666;">
+<p style="font-size: 0.9em; color: #666; user-select: none;">
   Last updated: {{.Generated}} |
 <a href="https://github.com/92kns/perftest_triage_report/issues" target="_blank" style="font-size: 0.9em;">
   🐞 File an issue on GitHub
