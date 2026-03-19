@@ -87,7 +87,7 @@ func main() {
 	flag.Parse()
 	maxConcurrent = *concurrency
 
-	fmt.Println("Generating Bugzilla report...")
+	fmt.Println("Generating PerfTest triage report...")
 
 	interBugs := fetchIntermittentBugs()
 	results := analyzeAll(interBugs)
@@ -210,7 +210,7 @@ func fetchTreeherderCounts(start, end string) map[int]int {
 	u := fmt.Sprintf("%s/failures/?startday=%s&endday=%s&tree=all", TreeherderURL, start, end)
 	req, _ := http.NewRequest("GET", u, nil)
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "bugzilla-report/1.0")
+	req.Header.Set("User-Agent", "perftest-report/1.0")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatalf("fetch treeherder counts: %v", err)
@@ -242,7 +242,7 @@ func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string
 	u := fmt.Sprintf("%s/failuresbybug/?startday=%s&endday=%s&tree=all&bug=%d", TreeherderURL, start, end, bugID)
 	req, _ := http.NewRequest("GET", u, nil)
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "bugzilla-report/1.0")
+	req.Header.Set("User-Agent", "perftest-report/1.0")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, nil
@@ -375,7 +375,7 @@ func writeHTMLReport(results []Result, permas []PermaBug) {
 	tmpl := `
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><title>Bugzilla Report</title>
+<head><meta charset="UTF-8"><title>PerfTest Triage Report</title>
 <style>
 body { font-family: sans-serif; padding: 1em; }
 h2 { margin: .8em 0 .4em; }

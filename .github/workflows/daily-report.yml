@@ -1,4 +1,4 @@
-name: Generate Bugzilla PerfTest Triage Report
+name: Generate Daily PerfTest Triage Report
 
 # Run when pushed to main branch, otherwise update once
 # a day at 0900 UTC

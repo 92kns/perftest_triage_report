@@ -48,8 +48,8 @@ Generates `report.html` and opens it in your browser.
 To compile a standalone binary:
 
 ```bash
-go build -o bugzilla-report main.go
-./bugzilla-report --no-open
+go build -o perftest-report main.go
+./perftest-report --no-open
 ```
 
 ---
