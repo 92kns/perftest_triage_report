@@ -1,8 +1,13 @@
 #!/bin/sh
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
 unformatted=$(gofmt -l .)
 if [ -n "$unformatted" ]; then
-    echo "Formatting issues found, running gofmt..."
+    printf "${RED}Formatting issues found, running gofmt...${RESET}\n"
     gofmt -w .
-    echo "Files formatted. Please re-stage and commit."
+    printf "${RED}Files formatted. Please re-stage and commit.${RESET}\n"
     exit 1
 fi
+printf "${GREEN}Formatting OK.${RESET}\n"
