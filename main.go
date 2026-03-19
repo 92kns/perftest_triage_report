@@ -301,6 +301,10 @@ func normalizePlatform(platform string) string {
 	base := strings.SplitN(p, "-", 2)[0]
 	switch {
 	case strings.HasPrefix(base, "android"):
+		parts := strings.Split(p, "-")
+		if len(parts) >= 3 {
+			return strings.Join(parts[:3], "-") // e.g. android-hw-p6, android-hw-a55
+		}
 		return "android"
 	case strings.HasPrefix(base, "linux"):
 		return base // e.g. linux1804, linux2404

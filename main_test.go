@@ -8,10 +8,10 @@ func TestNormalizePlatform(t *testing.T) {
 		expected string
 	}{
 		// Android hardware devices used in Raptor/Talos mobile runs
-		{"android-hw-p6-13-0-arm7-shippable", "android"},
-		{"android-hw-p6-13-0-arm64-shippable", "android"},
-		{"android-hw-a55-14-0-arm7-shippable", "android"},
-		{"android-hw-a55-14-0-arm64-shippable", "android"},
+		{"android-hw-p6-13-0-arm7-shippable", "android-hw-p6"},
+		{"android-hw-p6-13-0-arm64-shippable", "android-hw-p6"},
+		{"android-hw-a55-14-0-arm7-shippable", "android-hw-a55"},
+		{"android-hw-a55-14-0-arm64-shippable", "android-hw-a55"},
 		// Linux platforms common in AWSY and Talos (version preserved)
 		{"linux1804-64-shippable-qr", "linux1804"},
 		{"linux2204-64-qr", "linux2204"},
