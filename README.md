@@ -18,6 +18,7 @@ Useful for perftest triage sessions where engineers need a concise and accurate 
 - **Perma Bugs** (identified by title)
 - **OrangeFactor Graphs** (last 7 days)
 - Platform and repository breakdown (sourced directly from Treeherder API)
+- Bugs grouped by component: AWSY, mozperftest, Performance, Raptor, Talos
 - **Assigned To** and **NEEDINFO** tracking
 - Generates `report.html`
 - Daily report generated at 0900 UTC and published to pages
