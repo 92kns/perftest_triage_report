@@ -161,7 +161,7 @@ func main() {
 	}
 }
 
-var httpClient = &http.Client{Timeout: 30 * time.Second}
+var httpClient = &http.Client{Timeout: 60 * time.Second}
 
 func get(u string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", u, nil)
