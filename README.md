@@ -1,10 +1,10 @@
 # Perftest Triage Report Generator
 
-A Go CLI tool that automates the generation of weekly performance test triage reports by querying Bugzilla for:
+A Go CLI tool that automates the generation of weekly performance test triage reports by querying Bugzilla and Treeherder for:
 
-- 🟧 Intermittent test failures with high orangefactor counts (>=20)
+- 🟧 Intermittent test failures with high failure counts (>=20)
 - 🟥 Recent "Perma" bugs based on title substring
-- Repository breakdown
+- Repository and platform breakdown (via Treeherder API)
 - Assigned developer and NEEDINFO status
 - Outputs a ready-to-copy HTML report
 
@@ -17,7 +17,7 @@ Useful for perftest triage sessions where engineers need a concise and accurate 
 - **Intermittent Bugs** (over threshold)
 - **Perma Bugs** (identified by title)
 - **OrangeFactor Graphs** (last 7 days)
-- Platform + Repository breakdown parsing
+- Platform and repository breakdown (sourced directly from Treeherder API)
 - **Assigned To** and **NEEDINFO** tracking
 - Generates `report.html`
 - Daily report generated at 0900 UTC and published to pages
@@ -39,7 +39,7 @@ Generates `report.html` and opens it in your browser.
 | Flag             | Default | Description                                        |
 |------------------|---------|----------------------------------------------------|
 | `--no-open`      | false   | Do not open the browser after report is generated |
-| `--concurrency`  | 15      | Max concurrent Bugzilla API calls                 |
+| `--concurrency`  | 15      | Max concurrent Treeherder breakdown API calls     |
 
 ---
 
@@ -69,10 +69,8 @@ HTML includes:
 
 ## Future Ideas
 
-- Trend reporting/detection via last 2-3 comments
+- Trend reporting/detection using Treeherder historical data
 - Archiving weekly reports in repo history
-- Calls to treeherder database
-- Breakdown by platform
 
 ---
 
