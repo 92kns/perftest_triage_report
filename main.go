@@ -5,34 +5,27 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
-	"regexp"
 	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
 )
 
 const (
-	BugzillaURL  = "https://bugzilla.mozilla.org/rest/bug"
-	Threshold    = 20
-	DaysBack     = 7
-	AuthorFilter = "orangefactor@bots.tld"
-	outputHTML   = "report.html"
+	BugzillaURL   = "https://bugzilla.mozilla.org/rest/bug"
+	TreeherderURL = "https://treeherder.mozilla.org/api"
+	Threshold     = 20
+	DaysBack      = 7
+	outputHTML    = "report.html"
 )
 
-var (
-	reBlock       = regexp.MustCompile(`(?s)## Repository breakdown:(.*?)## Table(.*?)$`)
-	reNums        = regexp.MustCompile(`:\s*(\d+)`)
-	maxConcurrent int
-)
+var maxConcurrent int
 
 var components = []string{"AWSY", "mozperftest", "Performance", "Raptor", "Talos"}
 
@@ -49,18 +42,6 @@ type Bug struct {
 
 type BugListResponse struct {
 	Bugs []Bug `json:"bugs"`
-}
-
-type Comment struct {
-	CreationTime string `json:"creation_time"`
-	Author       string `json:"author"`
-	Text         string `json:"text"`
-}
-
-type CommentBlock struct {
-	Bugs map[string]struct {
-		Comments []Comment `json:"comments"`
-	} `json:"bugs"`
 }
 
 type Result struct {
@@ -84,6 +65,16 @@ type PermaBug struct {
 	Needinfo string
 }
 
+type THFailure struct {
+	BugID    *int `json:"bug_id"`
+	BugCount int  `json:"bug_count"`
+}
+
+type THJobFailure struct {
+	Platform string `json:"platform"`
+	Tree     string `json:"tree"`
+}
+
 func main() {
 	start := time.Now()
 	defer func() {
@@ -97,13 +88,10 @@ func main() {
 	maxConcurrent = *concurrency
 
 	fmt.Println("Generating Bugzilla report...")
-	lastWeek := time.Now().AddDate(0, 0, -DaysBack)
 
-	// Intermittent bugs (existing behavior)
 	interBugs := fetchIntermittentBugs()
-	results := analyzeAll(interBugs, lastWeek)
+	results := analyzeAll(interBugs)
 
-	// Perma bugs (new)
 	permas := fetchPermaBugs()
 
 	if len(results) == 0 && len(permas) == 0 {
@@ -116,7 +104,6 @@ func main() {
 	if !*noOpen {
 		openInBrowser(outputHTML)
 	}
-
 }
 
 // ===================== Fetchers =====================
@@ -147,7 +134,6 @@ func fetchIntermittentBugs() []Bug {
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		log.Fatalf("bad intermittent bug JSON: %v", err)
 	}
-	// Filter out perma bugs
 	filtered := make([]Bug, 0, len(out.Bugs))
 	for _, b := range out.Bugs {
 		if !strings.Contains(strings.ToLower(b.Summary), "perma") {
@@ -218,51 +204,48 @@ func fetchPermaBugs() []PermaBug {
 	return permas
 }
 
-// ===================== Analyzer (existing behavior) =====================
+// ===================== Treeherder =====================
 
-func analyzeAll(bugs []Bug, lastWeek time.Time) []Result {
-	if len(bugs) == 0 {
-		return nil
+func fetchTreeherderCounts(start, end string) map[int]int {
+	u := fmt.Sprintf("%s/failures/?startday=%s&endday=%s&tree=all", TreeherderURL, start, end)
+	req, _ := http.NewRequest("GET", u, nil)
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", "bugzilla-report/1.0")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatalf("fetch treeherder counts: %v", err)
+	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("warning: error closing body: %v", err)
+		}
+	}()
+	if resp.StatusCode != 200 {
+		log.Fatalf("treeherder counts: unexpected status %s", resp.Status)
 	}
 
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	results := map[int]Result{}
-	sema := make(chan struct{}, maxConcurrent)
-
-	for _, bug := range bugs {
-		wg.Add(1)
-		sema <- struct{}{}
-
-		go func(b Bug) {
-			defer wg.Done()
-			defer func() { <-sema }()
-
-			if res := analyzeBug(b, lastWeek); res != nil {
-				mu.Lock()
-				results[b.ID] = *res
-				mu.Unlock()
-			}
-		}(bug)
+	var counts []THFailure
+	if err := json.NewDecoder(resp.Body).Decode(&counts); err != nil {
+		log.Fatalf("decode treeherder counts: %v", err)
 	}
-	wg.Wait()
 
-	// flatten + sort
-	flat := make([]Result, 0, len(results))
-	for _, v := range results {
-		flat = append(flat, v)
+	m := make(map[int]int, len(counts))
+	for _, c := range counts {
+		if c.BugID != nil {
+			m[*c.BugID] = c.BugCount
+		}
 	}
-	sort.Slice(flat, func(i, j int) bool {
-		return flat[i].NumberFailures > flat[j].NumberFailures
-	})
-	return flat
+	return m
 }
 
-func analyzeBug(bug Bug, cutoff time.Time) *Result {
-	url := fmt.Sprintf("%s/%d/comment", BugzillaURL, bug.ID)
-	resp, err := http.Get(url)
+func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string, platforms []string) {
+	u := fmt.Sprintf("%s/failuresbybug/?startday=%s&endday=%s&tree=all&bug=%d", TreeherderURL, start, end, bugID)
+	req, _ := http.NewRequest("GET", u, nil)
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", "bugzilla-report/1.0")
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil
+		return nil, nil
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -270,115 +253,120 @@ func analyzeBug(bug Bug, cutoff time.Time) *Result {
 		}
 	}()
 
-	body, _ := io.ReadAll(resp.Body)
-	var cb CommentBlock
-	_ = json.Unmarshal(body, &cb)
+	var failures []THJobFailure
+	if err := json.NewDecoder(resp.Body).Decode(&failures); err != nil {
+		return nil, nil
+	}
 
-	entry, ok := cb.Bugs[strconv.Itoa(bug.ID)]
-	if !ok {
+	treeCounts := map[string]int{}
+	platformSet := map[string]bool{}
+	for _, f := range failures {
+		treeCounts[f.Tree]++
+		if p := normalizePlatform(f.Platform); p != "" {
+			platformSet[p] = true
+		}
+	}
+
+	for tree, count := range treeCounts {
+		breakdowns = append(breakdowns, fmt.Sprintf("%s: %d", tree, count))
+	}
+	sort.Strings(breakdowns)
+
+	for p := range platformSet {
+		platforms = append(platforms, p)
+	}
+	sort.Strings(platforms)
+	return
+}
+
+func normalizePlatform(platform string) string {
+	p := strings.ToLower(platform)
+	switch {
+	case strings.Contains(p, "android"):
+		return "android"
+	case strings.Contains(p, "linux"):
+		return "linux"
+	case strings.Contains(p, "macos") || strings.Contains(p, "osx"):
+		return "macos"
+	case strings.Contains(p, "win"):
+		return "windows"
+	}
+	return ""
+}
+
+// ===================== Analyzer =====================
+
+func analyzeAll(bugs []Bug) []Result {
+	if len(bugs) == 0 {
 		return nil
 	}
 
-	max := 0
-	var breakdownLines []string
-	var platforms []string
+	start := time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02")
+	end := time.Now().Format("2006-01-02")
 
-	for i := len(entry.Comments) - 1; i >= 0; i-- {
-		c := entry.Comments[i]
-		t, err := time.Parse(time.RFC3339, c.CreationTime)
-		if err != nil || t.Before(cutoff) || c.Author != AuthorFilter {
-			continue
-		}
+	counts := fetchTreeherderCounts(start, end)
 
-		match := reBlock.FindStringSubmatch(c.Text)
-		if len(match) < 3 {
-			continue
-		}
-		repoBlock := match[1]
-		platformBlock := match[2]
-
-		total := 0
-		for _, m := range reNums.FindAllStringSubmatch(repoBlock, -1) {
-			val, _ := strconv.Atoi(m[1])
-			total += val
-		}
-
-		if total > max {
-			max = total
-			breakdownLines = breakdownFrom(repoBlock)
-			platforms = platformsFrom(platformBlock)
+	var qualifying []Bug
+	for _, b := range bugs {
+		if counts[b.ID] >= Threshold {
+			qualifying = append(qualifying, b)
 		}
 	}
 
-	if max >= Threshold {
-		ni := ""
-		for _, flag := range bug.Flags {
-			if flag.Name == "needinfo" && flag.Requestee != "" {
-				ni = flag.Requestee
-				break
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var results []Result
+	sema := make(chan struct{}, maxConcurrent)
+
+	for _, bug := range qualifying {
+		wg.Add(1)
+		sema <- struct{}{}
+
+		go func(b Bug) {
+			defer wg.Done()
+			defer func() { <-sema }()
+
+			breakdowns, platforms := fetchTreeherderBreakdown(b.ID, start, end)
+
+			ni := ""
+			for _, flag := range b.Flags {
+				if flag.Name == "needinfo" && flag.Requestee != "" {
+					ni = flag.Requestee
+					break
+				}
 			}
-		}
-		// Get orange factor graph for last 7 days
-		start := time.Now().AddDate(0, 0, -7).Format("2006-01-02")
-		end := time.Now().Format("2006-01-02")
-		graphLink := fmt.Sprintf("https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d", start, end, bug.ID)
 
-		// get assignee
-		assigned := bug.AssignedTo
-		if assigned == "nobody@mozilla.org" || assigned == "" {
-			assigned = ""
-		}
-
-		return &Result{
-			ID:             bug.ID,
-			Link:           fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", bug.ID),
-			NumberFailures: max,
-			Summary:        bug.Summary,
-			Platforms:      platforms,
-			BreakdownList:  breakdownLines,
-			Needinfo:       ni,
-			GraphLink:      graphLink,
-			Assignee:       assigned,
-		}
-	}
-	return nil
-}
-
-func breakdownFrom(repoBlock string) []string {
-	lines := []string{}
-	for _, line := range strings.Split(repoBlock, "\n") {
-		clean := strings.TrimSpace(line)
-		if strings.HasPrefix(clean, "*") {
-			clean = strings.TrimSpace(strings.TrimPrefix(clean, "*"))
-		}
-		if clean != "" {
-			lines = append(lines, clean)
-		}
-	}
-	return lines
-}
-
-func platformsFrom(platformBlock string) []string {
-	plats := []string{}
-	for _, line := range strings.Split(platformBlock, "\n") {
-		trimmed := strings.TrimSpace(line)
-		if trimmed == "" {
-			continue
-		}
-		if (strings.Contains(trimmed, "android") ||
-			strings.Contains(trimmed, "linux") ||
-			strings.Contains(trimmed, "macos") ||
-			strings.Contains(trimmed, "win")) &&
-			!strings.Contains(trimmed, "|") {
-			// Strip leading markdown bullet if present
-			clean := strings.TrimSpace(trimmed)
-			if strings.HasPrefix(clean, "*") {
-				clean = strings.TrimSpace(strings.TrimPrefix(clean, "*"))
+			assigned := b.AssignedTo
+			if assigned == "nobody@mozilla.org" || assigned == "" {
+				assigned = ""
 			}
-			plats = append(plats, clean)
-		}
+
+			graphLink := fmt.Sprintf(
+				"https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d",
+				start, end, b.ID,
+			)
+
+			mu.Lock()
+			results = append(results, Result{
+				ID:             b.ID,
+				Link:           fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
+				NumberFailures: counts[b.ID],
+				Summary:        b.Summary,
+				Platforms:      platforms,
+				BreakdownList:  breakdowns,
+				Needinfo:       ni,
+				GraphLink:      graphLink,
+				Assignee:       assigned,
+			})
+			mu.Unlock()
+		}(bug)
 	}
-	return plats
+	wg.Wait()
+
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].NumberFailures > results[j].NumberFailures
+	})
+	return results
 }
 
 // ===================== HTML =====================
@@ -448,7 +436,6 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 
 </body></html>`
 
-	// Prepare data for template
 	data := struct {
 		Intermittents []Result
 		Permas        []PermaBug
