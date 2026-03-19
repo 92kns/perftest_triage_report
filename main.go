@@ -128,10 +128,16 @@ func main() {
 	startDay := time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02")
 	endDay := time.Now().Format("2006-01-02")
 
-	interBugs := fetchIntermittentBugs()
-	results := analyzeAll(interBugs, startDay, endDay)
+	var interBugs []Bug
+	var rawPermas []PermaBug
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() { defer wg.Done(); interBugs = fetchIntermittentBugs() }()
+	go func() { defer wg.Done(); rawPermas = fetchPermaBugs(startDay, endDay) }()
+	wg.Wait()
 
-	permas := enrichPermas(fetchPermaBugs(startDay, endDay), startDay, endDay)
+	results := analyzeAll(interBugs, startDay, endDay)
+	permas := enrichPermas(rawPermas, startDay, endDay)
 
 	if len(results) == 0 && len(permas) == 0 {
 		fmt.Println("No matching bugs found.")
