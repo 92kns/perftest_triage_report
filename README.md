@@ -43,6 +43,16 @@ Generates `report.html` and opens it in your browser.
 
 ---
 
+## Development Setup
+
+To enable the pre-push hook that runs tests before each push:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+---
+
 ## Build
 
 To compile a standalone binary:
