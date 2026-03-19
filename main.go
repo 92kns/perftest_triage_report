@@ -96,10 +96,13 @@ func main() {
 
 	fmt.Println("Generating PerfTest triage report...")
 
-	interBugs := fetchIntermittentBugs()
-	results := analyzeAll(interBugs)
+	startDay := time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02")
+	endDay := time.Now().Format("2006-01-02")
 
-	permas := fetchPermaBugs()
+	interBugs := fetchIntermittentBugs()
+	results := analyzeAll(interBugs, startDay, endDay)
+
+	permas := enrichPermas(fetchPermaBugs(startDay, endDay), startDay, endDay)
 
 	if len(results) == 0 && len(permas) == 0 {
 		fmt.Println("No matching bugs found.")
@@ -160,7 +163,7 @@ func fetchIntermittentBugs() []Bug {
 	return filtered
 }
 
-func fetchPermaBugs() []PermaBug {
+func fetchPermaBugs(start, end string) []PermaBug {
 	params := url.Values{}
 	params.Set("product", "Testing")
 	params.Set("resolution", "---")
@@ -203,24 +206,43 @@ func fetchPermaBugs() []PermaBug {
 		if assignee == "nobody@mozilla.org" {
 			assignee = ""
 		}
-		start := time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02")
-		end := time.Now().Format("2006-01-02")
 		graphURL := fmt.Sprintf(
 			"https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d",
 			start, end, b.ID,
 		)
-		breakdowns, platforms := fetchTreeherderBreakdown(b.ID, start, end)
 		permas = append(permas, PermaBug{
-			ID:            b.ID,
-			Link:          fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
-			Summary:       b.Summary,
-			Assignee:      assignee,
-			GraphURL:      graphURL,
-			Needinfo:      ni,
-			Platforms:     platforms,
-			BreakdownList: breakdowns,
+			ID:       b.ID,
+			Link:     fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
+			Summary:  b.Summary,
+			Assignee: assignee,
+			GraphURL: graphURL,
+			Needinfo: ni,
 		})
 	}
+	return permas
+}
+
+func enrichPermas(permas []PermaBug, start, end string) []PermaBug {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	sema := make(chan struct{}, maxConcurrent)
+
+	for i, p := range permas {
+		wg.Add(1)
+		sema <- struct{}{}
+
+		go func(idx int, bug PermaBug) {
+			defer wg.Done()
+			defer func() { <-sema }()
+
+			breakdowns, platforms := fetchTreeherderBreakdown(bug.ID, start, end)
+			mu.Lock()
+			permas[idx].BreakdownList = breakdowns
+			permas[idx].Platforms = platforms
+			mu.Unlock()
+		}(i, p)
+	}
+	wg.Wait()
 	return permas
 }
 
@@ -336,13 +358,10 @@ func normalizePlatform(platform string) string {
 
 // ===================== Analyzer =====================
 
-func analyzeAll(bugs []Bug) []Result {
+func analyzeAll(bugs []Bug, start, end string) []Result {
 	if len(bugs) == 0 {
 		return nil
 	}
-
-	start := time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02")
-	end := time.Now().Format("2006-01-02")
 
 	counts := fetchTreeherderCounts(start, end)
 

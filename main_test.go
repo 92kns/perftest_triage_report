@@ -210,7 +210,7 @@ func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 		{ID: 300, Summary: "Intermittent AWSY failure"},
 	}
 
-	results := analyzeAll(bugs)
+	results := analyzeAll(bugs, "2026-03-12", "2026-03-19")
 
 	if len(results) != 2 {
 		t.Fatalf("got %d results, want 2 (bug 200 below threshold)", len(results))
