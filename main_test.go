@@ -86,7 +86,9 @@ func TestFetchTreeherderCounts(t *testing.T) {
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(payload)
+		if err := json.NewEncoder(w).Encode(payload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -116,7 +118,9 @@ func TestFetchTreeherderBreakdown(t *testing.T) {
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(payload)
+		if err := json.NewEncoder(w).Encode(payload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -158,7 +162,9 @@ func TestFetchIntermittentBugs(t *testing.T) {
 	}}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(payload)
+		if err := json.NewEncoder(w).Encode(payload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -192,10 +198,14 @@ func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
+		var err error
 		if r.URL.Path == "/failures/" {
-			json.NewEncoder(w).Encode(countsPayload)
+			err = json.NewEncoder(w).Encode(countsPayload)
 		} else {
-			json.NewEncoder(w).Encode(breakdownPayload)
+			err = json.NewEncoder(w).Encode(breakdownPayload)
+		}
+		if err != nil {
+			t.Errorf("failed to encode response: %v", err)
 		}
 	}))
 	defer server.Close()

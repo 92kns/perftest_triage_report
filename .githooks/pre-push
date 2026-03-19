@@ -10,3 +10,15 @@ else
     printf "${RED}Tests failed. Push aborted.${RESET}\n"
     exit 1
 fi
+
+if command -v golangci-lint >/dev/null 2>&1; then
+    echo "Running linter..."
+    if golangci-lint run; then
+        printf "${GREEN}Lint passed.${RESET}\n"
+    else
+        printf "${RED}Lint failed. Push aborted.${RESET}\n"
+        exit 1
+    fi
+else
+    printf "golangci-lint not installed, skipping lint.\n"
+fi
