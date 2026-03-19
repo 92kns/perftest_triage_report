@@ -20,9 +20,12 @@ import (
 const (
 	BugzillaURL   = "https://bugzilla.mozilla.org/rest/bug"
 	TreeherderURL = "https://treeherder.mozilla.org/api"
-	Threshold     = 20
-	DaysBack      = 7
 	outputHTML    = "report.html"
+)
+
+var (
+	threshold int
+	daysBack  int
 )
 
 var (
@@ -120,12 +123,14 @@ func main() {
 	// user to specify number of concurrent fetches
 	noOpen := flag.Bool("no-open", false, "Disable opening browser after generating report")
 	concurrency := flag.Int("concurrency", 5, "Maximum number of concurrent Treeherder breakdown fetches")
+	flag.IntVar(&threshold, "threshold", 20, "Minimum failure count to include a bug")
+	flag.IntVar(&daysBack, "days", 7, "Number of days back to query")
 	flag.Parse()
 	maxConcurrent = *concurrency
 
 	fmt.Println("Generating PerfTest triage report...")
 
-	startDay := time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02")
+	startDay := time.Now().AddDate(0, 0, -daysBack).Format("2006-01-02")
 	endDay := time.Now().Format("2006-01-02")
 
 	var interBugs []Bug
@@ -405,7 +410,7 @@ func analyzeAll(bugs []Bug, start, end string) []Result {
 
 	var qualifying []Bug
 	for _, b := range bugs {
-		if counts[b.ID] >= Threshold {
+		if counts[b.ID] >= threshold {
 			qualifying = append(qualifying, b)
 		}
 	}

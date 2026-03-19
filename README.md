@@ -41,6 +41,8 @@ Generates `report.html` and opens it in your browser.
 |------------------|---------|----------------------------------------------------|
 | `--no-open`      | false   | Do not open the browser after report is generated |
 | `--concurrency`  | 5       | Max concurrent Treeherder breakdown API calls     |
+| `--threshold`    | 20      | Minimum failure count to include a bug            |
+| `--days`         | 7       | Number of days back to query                      |
 
 ---
 

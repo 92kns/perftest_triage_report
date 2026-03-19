@@ -211,6 +211,7 @@ func TestFetchIntermittentBugs(t *testing.T) {
 
 func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 	maxConcurrent = 5
+	threshold = 20
 	// Treeherder counts server
 	bug1ID, bug2ID, bug3ID := 100, 200, 300
 	countsPayload := []THFailure{
