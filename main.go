@@ -259,11 +259,11 @@ func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string
 	}
 
 	treeCounts := map[string]int{}
-	platformSet := map[string]bool{}
+	platformCounts := map[string]int{}
 	for _, f := range failures {
 		treeCounts[f.Tree]++
 		if p := normalizePlatform(f.Platform); p != "" {
-			platformSet[p] = true
+			platformCounts[p]++
 		}
 	}
 
@@ -272,8 +272,8 @@ func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string
 	}
 	sort.Strings(breakdowns)
 
-	for p := range platformSet {
-		platforms = append(platforms, p)
+	for p, count := range platformCounts {
+		platforms = append(platforms, fmt.Sprintf("%s: %d", p, count))
 	}
 	sort.Strings(platforms)
 	return
