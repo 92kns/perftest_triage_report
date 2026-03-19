@@ -13,7 +13,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </head><body>
 
 <p style="font-size: 0.9em; color: #666; user-select: none;">
-  Last updated: 2026-03-19 21:10 UTC |
+  Last updated: 2026-03-19 21:23 UTC |
 <a href="https://github.com/92kns/perftest_triage_report/issues" target="_blank" style="font-size: 0.9em;">
   🐞 File an issue on GitHub
 </a>
@@ -27,7 +27,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <li><b>197</b> Failures</li>
     
       <li>Platforms:
-        <ul class="subdetails"><li>linux: 194</li><li>macos: 1</li><li>windows: 2</li></ul>
+        <ul class="subdetails"><li>linux1804: 2</li><li>linux2404: 192</li><li>macosx1470: 1</li><li>windows11: 2</li></ul>
       </li>
     
     
@@ -46,7 +46,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <li><b>181</b> Failures</li>
     
       <li>Platforms:
-        <ul class="subdetails"><li>linux: 2</li><li>windows: 179</li></ul>
+        <ul class="subdetails"><li>linux2404: 2</li><li>windows11: 179</li></ul>
       </li>
     
     
@@ -65,7 +65,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <li><b>133</b> Failures</li>
     
       <li>Platforms:
-        <ul class="subdetails"><li>linux: 2</li><li>macos: 2</li><li>windows: 129</li></ul>
+        <ul class="subdetails"><li>linux2404: 2</li><li>macosx1470: 2</li><li>windows11: 129</li></ul>
       </li>
     
     
@@ -84,7 +84,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <li><b>52</b> Failures</li>
     
       <li>Platforms:
-        <ul class="subdetails"><li>android: 3</li><li>linux: 44</li><li>windows: 5</li></ul>
+        <ul class="subdetails"><li>android-hw-a55: 3</li><li>linux1804: 23</li><li>linux2404: 21</li><li>windows11: 5</li></ul>
       </li>
     
     
@@ -103,7 +103,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <li><b>34</b> Failures</li>
     
       <li>Platforms:
-        <ul class="subdetails"><li>android: 20</li><li>windows: 14</li></ul>
+        <ul class="subdetails"><li>android-hw-a55: 20</li><li>windows11: 14</li></ul>
       </li>
     
     
@@ -129,7 +129,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
             <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-03-12&amp;endday=2026-03-19&amp;tree=all&amp;bug=1949085" target="_blank">Orange Factor Graph 📈</a></li>
             
               <li>Platforms:
-                <ul class="subdetails"><li>android: 1</li></ul>
+                <ul class="subdetails"><li>android-hw-a55: 1</li></ul>
               </li>
             
             
@@ -147,6 +147,10 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
           <ul class="details">
             <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-03-12&amp;endday=2026-03-19&amp;tree=all&amp;bug=2012020" target="_blank">Orange Factor Graph 📈</a></li>
             
+              <li>Platforms:
+                <ul class="subdetails"><li>linux: 1</li></ul>
+              </li>
+            
             
               <li>Repository Breakdown:
                 <ul class="subdetails"><li>mozilla-central: 1</li></ul>
@@ -163,7 +167,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 
 <script>
 document.querySelectorAll('ul.subdetails li').forEach(el => {
-  el.innerHTML = el.innerHTML.replace(/(\d+)/g, '<b>$1</b>');
+  el.innerHTML = el.innerHTML.replace(/(:\s*)(\d+)/g, '$1<b>$2</b>');
 });
 </script>
 </body></html>
