@@ -39,7 +39,7 @@ Generates `report.html` and opens it in your browser.
 | Flag             | Default | Description                                        |
 |------------------|---------|----------------------------------------------------|
 | `--no-open`      | false   | Do not open the browser after report is generated |
-| `--concurrency`  | 15      | Max concurrent Treeherder breakdown API calls     |
+| `--concurrency`  | 5       | Max concurrent Treeherder breakdown API calls     |
 
 ---
 

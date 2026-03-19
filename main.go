@@ -83,7 +83,7 @@ func main() {
 	// setup CLI flags for disabling the automatic HTML report opening in browser and allowing
 	// user to specify number of concurrent fetches
 	noOpen := flag.Bool("no-open", false, "Disable opening browser after generating report")
-	concurrency := flag.Int("concurrency", 15, "Maximum number of concurrent Bugzilla fetches")
+	concurrency := flag.Int("concurrency", 5, "Maximum number of concurrent Treeherder breakdown fetches")
 	flag.Parse()
 	maxConcurrent = *concurrency
 
