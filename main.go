@@ -40,7 +40,6 @@ type Bug struct {
 	Flags     []struct {
 		Name      string `json:"name"`
 		Requestee string `json:"requestee"`
-		Setter    string `json:"setter"`
 	} `json:"flags,omitempty"`
 	AssignedTo string `json:"assigned_to"`
 }
@@ -68,7 +67,7 @@ type PermaBug struct {
 	Summary       string
 	Component     string
 	Assignee      string
-	GraphURL      string
+	GraphLink     string
 	Needinfo      string
 	Platforms     []string
 	BreakdownList []string
@@ -199,7 +198,7 @@ func fetchPermaBugs(start, end string) []PermaBug {
 	params.Set("resolution", "---")
 	params.Set("short_desc", "Perma")
 	params.Set("short_desc_type", "allwordssubstr")
-	params.Set("last_change_time", time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02"))
+	params.Set("last_change_time", start)
 	params.Set("include_fields", "id,summary,component,assigned_to,flags")
 	params.Set("keywords", "intermittent-failure")
 
@@ -246,7 +245,7 @@ func fetchPermaBugs(start, end string) []PermaBug {
 			Summary:   b.Summary,
 			Component: b.Component,
 			Assignee:  assignee,
-			GraphURL:  graphURL,
+			GraphLink: graphURL,
 			Needinfo:  ni,
 		})
 	}
@@ -525,7 +524,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <li>
           <a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
           <ul class="details">
-            <li><a href="{{.GraphURL}}" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
             {{if .Platforms}}
               <li>Platforms:
                 <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
