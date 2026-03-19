@@ -145,6 +145,8 @@ func main() {
 	}
 }
 
+var httpClient = &http.Client{Timeout: 30 * time.Second}
+
 func get(u string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
@@ -152,7 +154,7 @@ func get(u string) (*http.Response, error) {
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "mozilla-perftest-report/1.0")
-	return http.DefaultClient.Do(req)
+	return httpClient.Do(req)
 }
 
 // ===================== Fetchers =====================
