@@ -106,6 +106,16 @@ func main() {
 	}
 }
 
+func get(u string) (*http.Response, error) {
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", "mozilla-perftest-report/1.0")
+	return http.DefaultClient.Do(req)
+}
+
 // ===================== Fetchers =====================
 
 func fetchIntermittentBugs() []Bug {
@@ -120,7 +130,7 @@ func fetchIntermittentBugs() []Bug {
 		params.Add("component", c)
 	}
 
-	resp, err := http.Get(BugzillaURL + "?" + params.Encode())
+	resp, err := get(BugzillaURL + "?" + params.Encode())
 	if err != nil {
 		log.Fatalf("fetch intermittents failed: %v", err)
 	}
@@ -157,7 +167,7 @@ func fetchPermaBugs() []PermaBug {
 		params.Add("component", c)
 	}
 
-	resp, err := http.Get(BugzillaURL + "?" + params.Encode())
+	resp, err := get(BugzillaURL + "?" + params.Encode())
 	if err != nil {
 		log.Fatalf("fetch failed: %v", err)
 	}
@@ -208,10 +218,7 @@ func fetchPermaBugs() []PermaBug {
 
 func fetchTreeherderCounts(start, end string) map[int]int {
 	u := fmt.Sprintf("%s/failures/?startday=%s&endday=%s&tree=all", TreeherderURL, start, end)
-	req, _ := http.NewRequest("GET", u, nil)
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "perftest-report/1.0")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := get(u)
 	if err != nil {
 		log.Fatalf("fetch treeherder counts: %v", err)
 	}
@@ -240,10 +247,7 @@ func fetchTreeherderCounts(start, end string) map[int]int {
 
 func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string, platforms []string) {
 	u := fmt.Sprintf("%s/failuresbybug/?startday=%s&endday=%s&tree=all&bug=%d", TreeherderURL, start, end, bugID)
-	req, _ := http.NewRequest("GET", u, nil)
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "perftest-report/1.0")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := get(u)
 	if err != nil {
 		return nil, nil
 	}
