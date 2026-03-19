@@ -7,6 +7,31 @@ import (
 	"testing"
 )
 
+func TestGroupByComponent(t *testing.T) {
+	results := []Result{
+		{ID: 1, Component: "Raptor", NumberFailures: 50},
+		{ID: 2, Component: "Talos", NumberFailures: 30},
+		{ID: 3, Component: "Raptor", NumberFailures: 80},
+		{ID: 4, Component: "AWSY", NumberFailures: 20},
+	}
+	order := []string{"AWSY", "mozperftest", "Performance", "Raptor", "Talos"}
+	groups := groupByComponent(results, order)
+
+	// mozperftest and Performance have no bugs, should be omitted
+	if len(groups) != 3 {
+		t.Fatalf("got %d groups, want 3", len(groups))
+	}
+	if groups[0].Name != "AWSY" || len(groups[0].Bugs) != 1 {
+		t.Errorf("group 0: got %q with %d bugs, want AWSY with 1", groups[0].Name, len(groups[0].Bugs))
+	}
+	if groups[1].Name != "Raptor" || len(groups[1].Bugs) != 2 {
+		t.Errorf("group 1: got %q with %d bugs, want Raptor with 2", groups[1].Name, len(groups[1].Bugs))
+	}
+	if groups[2].Name != "Talos" || len(groups[2].Bugs) != 1 {
+		t.Errorf("group 2: got %q with %d bugs, want Talos with 1", groups[2].Name, len(groups[2].Bugs))
+	}
+}
+
 func TestNormalizePlatform(t *testing.T) {
 	tests := []struct {
 		input    string

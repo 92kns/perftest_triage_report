@@ -34,9 +34,10 @@ var (
 var components = []string{"AWSY", "mozperftest", "Performance", "Raptor", "Talos"}
 
 type Bug struct {
-	ID      int    `json:"id"`
-	Summary string `json:"summary"`
-	Flags   []struct {
+	ID        int    `json:"id"`
+	Summary   string `json:"summary"`
+	Component string `json:"component"`
+	Flags     []struct {
 		Name      string `json:"name"`
 		Requestee string `json:"requestee"`
 		Setter    string `json:"setter"`
@@ -53,6 +54,7 @@ type Result struct {
 	Link           string
 	NumberFailures int
 	Summary        string
+	Component      string
 	Platforms      []string
 	BreakdownList  []string
 	Needinfo       string
@@ -64,11 +66,39 @@ type PermaBug struct {
 	ID            int
 	Link          string
 	Summary       string
+	Component     string
 	Assignee      string
 	GraphURL      string
 	Needinfo      string
 	Platforms     []string
 	BreakdownList []string
+}
+
+type ComponentGroup[T any] struct {
+	Name string
+	Bugs []T
+}
+
+type hasComponent interface {
+	component() string
+}
+
+func (r Result) component() string   { return r.Component }
+func (p PermaBug) component() string { return p.Component }
+
+func groupByComponent[T hasComponent](items []T, order []string) []ComponentGroup[T] {
+	m := map[string][]T{}
+	for _, item := range items {
+		c := item.component()
+		m[c] = append(m[c], item)
+	}
+	var groups []ComponentGroup[T]
+	for _, name := range order {
+		if bugs, ok := m[name]; ok {
+			groups = append(groups, ComponentGroup[T]{Name: name, Bugs: bugs})
+		}
+	}
+	return groups
 }
 
 type THFailure struct {
@@ -134,7 +164,7 @@ func fetchIntermittentBugs() []Bug {
 	params.Set("keywords", "intermittent-failure")
 	params.Set("keywords_type", "allwords")
 	params.Set("resolution", "---")
-	params.Set("include_fields", "id,summary,flags,assigned_to")
+	params.Set("include_fields", "id,summary,component,flags,assigned_to")
 
 	for _, c := range components {
 		params.Add("component", c)
@@ -170,7 +200,7 @@ func fetchPermaBugs(start, end string) []PermaBug {
 	params.Set("short_desc", "Perma")
 	params.Set("short_desc_type", "allwordssubstr")
 	params.Set("last_change_time", time.Now().AddDate(0, 0, -DaysBack).Format("2006-01-02"))
-	params.Set("include_fields", "id,summary,assigned_to,flags")
+	params.Set("include_fields", "id,summary,component,assigned_to,flags")
 	params.Set("keywords", "intermittent-failure")
 
 	for _, c := range components {
@@ -211,12 +241,13 @@ func fetchPermaBugs(start, end string) []PermaBug {
 			start, end, b.ID,
 		)
 		permas = append(permas, PermaBug{
-			ID:       b.ID,
-			Link:     fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
-			Summary:  b.Summary,
-			Assignee: assignee,
-			GraphURL: graphURL,
-			Needinfo: ni,
+			ID:        b.ID,
+			Link:      fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
+			Summary:   b.Summary,
+			Component: b.Component,
+			Assignee:  assignee,
+			GraphURL:  graphURL,
+			Needinfo:  ni,
 		})
 	}
 	return permas
@@ -411,6 +442,7 @@ func analyzeAll(bugs []Bug, start, end string) []Result {
 				Link:           fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
 				NumberFailures: counts[b.ID],
 				Summary:        b.Summary,
+				Component:      b.Component,
 				Platforms:      platforms,
 				BreakdownList:  breakdowns,
 				Needinfo:       ni,
@@ -438,10 +470,12 @@ func writeHTMLReport(results []Result, permas []PermaBug) {
 <style>
 body { font-family: sans-serif; padding: 1em; }
 h2 { margin: .8em 0 .4em; }
+h3 { margin: .6em 0 .3em; color: #555; font-size: 1em; }
 ul.buglist { list-style: disc; padding-left: 1em; margin: 0; }
 ul.details { list-style: circle; padding-left: 1.5em; margin-top: 0.25em; margin-bottom: 0; }
 ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 .section { margin-top: 12px; }
+.component-group { margin-top: 10px; }
 </style>
 </head><body>
 
@@ -452,34 +486,42 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </a>
 </p>
 <h2>🟧 Intermittent Failures</h2>
-<ul class="buglist">
 {{range .Intermittents}}
-<li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
-  <ul class="details">
-    <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
-    <li><b>{{.NumberFailures}}</b> Failures</li>
-    {{if .Platforms}}
-      <li>Platforms:
-        <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
-      </li>
-    {{end}}
-    {{if .BreakdownList}}
-      <li>Repository Breakdown:
-        <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
-      </li>
-    {{end}}
-    {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
-    {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
+<div class="component-group">
+  <h3>{{.Name}}</h3>
+  <ul class="buglist">
+  {{range .Bugs}}
+  <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
+    <ul class="details">
+      <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>{{.NumberFailures}}</b> Failures</li>
+      {{if .Platforms}}
+        <li>Platforms:
+          <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
+        </li>
+      {{end}}
+      {{if .BreakdownList}}
+        <li>Repository Breakdown:
+          <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
+        </li>
+      {{end}}
+      {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
+      {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
+    </ul>
+  </li>
+  {{end}}
   </ul>
-</li>
+</div>
 {{end}}
-</ul>
 
 {{if .Permas}}
   <div class="section">
     <h2>🟥 Perma Failures</h2>
-    <ul class="buglist">
-      {{range .Permas}}
+    {{range .Permas}}
+    <div class="component-group">
+      <h3>{{.Name}}</h3>
+      <ul class="buglist">
+        {{range .Bugs}}
         <li>
           <a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
           <ul class="details">
@@ -498,8 +540,10 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
             {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
           </ul>
         </li>
-      {{end}}
-    </ul>
+        {{end}}
+      </ul>
+    </div>
+    {{end}}
   </div>
 {{end}}
 
@@ -511,12 +555,12 @@ document.querySelectorAll('ul.subdetails li').forEach(el => {
 </body></html>`
 
 	data := struct {
-		Intermittents []Result
-		Permas        []PermaBug
+		Intermittents []ComponentGroup[Result]
+		Permas        []ComponentGroup[PermaBug]
 		Generated     string
 	}{
-		Intermittents: results,
-		Permas:        permas,
+		Intermittents: groupByComponent(results, components),
+		Permas:        groupByComponent(permas, components),
 		Generated:     time.Now().UTC().Format("2006-01-02 15:04 MST"),
 	}
 
