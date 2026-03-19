@@ -303,3 +303,83 @@ func TestRenderHTML(t *testing.T) {
 		}
 	}
 }
+
+func TestFetchPermaBugs(t *testing.T) {
+	payload := BugListResponse{Bugs: []Bug{
+		{ID: 10, Summary: "Perma raptor-browsertime timeout", Component: "Raptor",
+			AssignedTo: "dev@mozilla.com",
+			Flags: []struct {
+				Name      string `json:"name"`
+				Requestee string `json:"requestee"`
+			}{{Name: "needinfo", Requestee: "manager@mozilla.com"}}},
+		{ID: 11, Summary: "Perma talos regression", Component: "Talos",
+			AssignedTo: "nobody@mozilla.org"},
+	}}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(payload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	old := bugzillaBase
+	bugzillaBase = server.URL
+	defer func() { bugzillaBase = old }()
+
+	bugs := fetchPermaBugs("2026-03-12", "2026-03-19")
+
+	if len(bugs) != 2 {
+		t.Fatalf("got %d bugs, want 2", len(bugs))
+	}
+
+	if bugs[0].Assignee != "dev@mozilla.com" {
+		t.Errorf("assignee: got %q, want %q", bugs[0].Assignee, "dev@mozilla.com")
+	}
+	if bugs[0].Needinfo != "manager@mozilla.com" {
+		t.Errorf("needinfo: got %q, want %q", bugs[0].Needinfo, "manager@mozilla.com")
+	}
+	if bugs[1].Assignee != "" {
+		t.Errorf("nobody@mozilla.org should be treated as unassigned, got %q", bugs[1].Assignee)
+	}
+	if bugs[0].GraphLink == "" {
+		t.Error("GraphLink should be set")
+	}
+	if bugs[0].Component != "Raptor" {
+		t.Errorf("component: got %q, want Raptor", bugs[0].Component)
+	}
+}
+
+func TestEnrichPermas(t *testing.T) {
+	breakdownPayload := []THJobFailure{
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "raptor-tp6"},
+		{Platform: "windows11-64-2009-shippable", Tree: "mozilla-central", TestSuite: "talos-g5"},
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(breakdownPayload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	old := treeherderBase
+	treeherderBase = server.URL
+	defer func() { treeherderBase = old }()
+
+	permas := []PermaBug{
+		{ID: 10, Summary: "Perma raptor timeout", Component: "Raptor"},
+		{ID: 11, Summary: "Perma talos regression", Component: "Talos"},
+	}
+
+	enriched := enrichPermas(permas, "2026-03-12", "2026-03-19")
+
+	for _, p := range enriched {
+		if len(p.BreakdownList) == 0 {
+			t.Errorf("bug %d: expected breakdown to be populated", p.ID)
+		}
+		if len(p.Platforms) == 0 {
+			t.Errorf("bug %d: expected platforms to be populated", p.ID)
+		}
+	}
+}
