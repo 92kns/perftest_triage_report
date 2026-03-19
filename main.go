@@ -57,12 +57,14 @@ type Result struct {
 }
 
 type PermaBug struct {
-	ID       int
-	Link     string
-	Summary  string
-	Assignee string
-	GraphURL string
-	Needinfo string
+	ID            int
+	Link          string
+	Summary       string
+	Assignee      string
+	GraphURL      string
+	Needinfo      string
+	Platforms     []string
+	BreakdownList []string
 }
 
 type THFailure struct {
@@ -202,13 +204,16 @@ func fetchPermaBugs() []PermaBug {
 			"https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d",
 			start, end, b.ID,
 		)
+		breakdowns, platforms := fetchTreeherderBreakdown(b.ID, start, end)
 		permas = append(permas, PermaBug{
-			ID:       b.ID,
-			Link:     fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
-			Summary:  b.Summary,
-			Assignee: assignee,
-			GraphURL: graphURL,
-			Needinfo: ni,
+			ID:            b.ID,
+			Link:          fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
+			Summary:       b.Summary,
+			Assignee:      assignee,
+			GraphURL:      graphURL,
+			Needinfo:      ni,
+			Platforms:     platforms,
+			BreakdownList: breakdowns,
 		})
 	}
 	return permas
@@ -402,7 +407,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
   <ul class="details">
     <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
-    <li>{{.NumberFailures}} Failures</li>
+    <li><b>{{.NumberFailures}}</b> Failures</li>
     {{if .Platforms}}
       <li>Platforms:
         <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
@@ -429,6 +434,16 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
           <a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
           <ul class="details">
             <li><a href="{{.GraphURL}}" target="_blank">Orange Factor Graph 📈</a></li>
+            {{if .Platforms}}
+              <li>Platforms:
+                <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
+              </li>
+            {{end}}
+            {{if .BreakdownList}}
+              <li>Repository Breakdown:
+                <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
+              </li>
+            {{end}}
             {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
             {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
           </ul>
@@ -438,6 +453,11 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   </div>
 {{end}}
 
+<script>
+document.querySelectorAll('ul.subdetails li').forEach(el => {
+  el.innerHTML = el.innerHTML.replace(/(\d+)/g, '<b>$1</b>');
+});
+</script>
 </body></html>`
 
 	data := struct {
