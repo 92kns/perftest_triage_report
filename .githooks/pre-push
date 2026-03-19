@@ -1,0 +1,12 @@
+#!/bin/sh
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+echo "Running tests before push..."
+if go test ./...; then
+    printf "${GREEN}All tests passed.${RESET}\n"
+else
+    printf "${RED}Tests failed. Push aborted.${RESET}\n"
+    exit 1
+fi
