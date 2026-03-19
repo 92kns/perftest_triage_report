@@ -12,18 +12,19 @@ func TestNormalizePlatform(t *testing.T) {
 		{"android-hw-p6-13-0-arm64-shippable", "android"},
 		{"android-hw-a55-14-0-arm7-shippable", "android"},
 		{"android-hw-a55-14-0-arm64-shippable", "android"},
-		// Linux platforms common in AWSY and Talos
-		{"linux1804-64-shippable-qr", "linux"},
-		{"linux2204-64-qr", "linux"},
-		{"linux2404-64-shippable", "linux"},
-		// macOS platforms used in Raptor
-		{"macosx1015-64-shippable-qr", "macos"},
-		{"macosx1470-64-shippable", "macos"},
+		// Linux platforms common in AWSY and Talos (version preserved)
+		{"linux1804-64-shippable-qr", "linux1804"},
+		{"linux2204-64-qr", "linux2204"},
+		{"linux2404-64-shippable", "linux2404"},
+		// macOS platforms used in Raptor (version preserved for intel vs apple silicon distinction)
+		{"macosx1015-64-shippable-qr", "macosx1015"},
+		{"macosx1470-64-shippable", "macosx1470"},
 		// Windows platforms used in Talos and mozperftest
-		{"windows11-64-2009-shippable", "windows"},
-		{"windows10-64-2009-shippable", "windows"},
-		// Unknown/unrecognised
-		{"unknown-platform", ""},
+		{"windows11-64-2009-shippable", "windows11"},
+		{"windows10-64-2009-shippable", "windows10"},
+		// Unknown platforms returned as-is
+		{"unknown-platform", "unknown-platform"},
+		{"toolchains", "toolchains"},
 		{"", ""},
 	}
 

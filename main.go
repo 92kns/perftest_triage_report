@@ -73,8 +73,9 @@ type THFailure struct {
 }
 
 type THJobFailure struct {
-	Platform string `json:"platform"`
-	Tree     string `json:"tree"`
+	Platform  string `json:"platform"`
+	Tree      string `json:"tree"`
+	TestSuite string `json:"test_suite"`
 }
 
 func main() {
@@ -271,7 +272,11 @@ func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string
 	platformCounts := map[string]int{}
 	for _, f := range failures {
 		treeCounts[f.Tree]++
-		if p := normalizePlatform(f.Platform); p != "" {
+		platformStr := f.Platform
+		if strings.EqualFold(platformStr, "toolchains") {
+			platformStr = f.TestSuite
+		}
+		if p := normalizePlatform(platformStr); p != "" {
 			platformCounts[p]++
 		}
 	}
@@ -290,6 +295,21 @@ func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string
 
 func normalizePlatform(platform string) string {
 	p := strings.ToLower(platform)
+	if p == "" {
+		return ""
+	}
+	base := strings.SplitN(p, "-", 2)[0]
+	switch {
+	case strings.HasPrefix(base, "android"):
+		return "android"
+	case strings.HasPrefix(base, "linux"):
+		return base // e.g. linux1804, linux2404
+	case strings.HasPrefix(base, "macosx"), strings.HasPrefix(base, "osx"):
+		return base // e.g. macosx1470, macosx1500
+	case strings.HasPrefix(base, "win"):
+		return base // e.g. windows11
+	}
+	// Fallback for strings like "toolchain-linux64-custom-car"
 	switch {
 	case strings.Contains(p, "android"):
 		return "android"
@@ -300,7 +320,7 @@ func normalizePlatform(platform string) string {
 	case strings.Contains(p, "win"):
 		return "windows"
 	}
-	return ""
+	return platform
 }
 
 // ===================== Analyzer =====================
@@ -455,7 +475,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 
 <script>
 document.querySelectorAll('ul.subdetails li').forEach(el => {
-  el.innerHTML = el.innerHTML.replace(/(\d+)/g, '<b>$1</b>');
+  el.innerHTML = el.innerHTML.replace(/(:\s*)(\d+)/g, '$1<b>$2</b>');
 });
 </script>
 </body></html>`
