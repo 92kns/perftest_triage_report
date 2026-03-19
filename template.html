@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>PerfTest Triage Report</title>
+<style>
+body { font-family: sans-serif; padding: 1em; }
+h2 { margin: .8em 0 .4em; }
+h3 { margin: .6em 0 .3em; color: #555; font-size: 1em; }
+ul.buglist { list-style: disc; padding-left: 1em; margin: 0; }
+ul.details { list-style: circle; padding-left: 1.5em; margin-top: 0.25em; margin-bottom: 0; }
+ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
+.section { margin-top: 12px; }
+.component-group { margin-top: 10px; }
+</style>
+</head><body>
+
+<p style="font-size: 0.9em; color: #666; user-select: none;">
+  Last updated: {{.Generated}} |
+<a href="https://github.com/92kns/perftest_triage_report/issues" target="_blank" style="font-size: 0.9em;">
+  🐞 File an issue on GitHub
+</a>
+</p>
+<h2>🟧 Intermittent Failures</h2>
+{{range .Intermittents}}
+<div class="component-group">
+  <h3>{{.Name}}</h3>
+  <ul class="buglist">
+  {{range .Bugs}}
+  <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
+    <ul class="details">
+      <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>{{.NumberFailures}}</b> Failures</li>
+      {{if .Platforms}}
+        <li>Platforms:
+          <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
+        </li>
+      {{end}}
+      {{if .BreakdownList}}
+        <li>Repository Breakdown:
+          <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
+        </li>
+      {{end}}
+      {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
+      {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
+    </ul>
+  </li>
+  {{end}}
+  </ul>
+</div>
+{{end}}
+
+{{if .Permas}}
+  <div class="section">
+    <h2>🟥 Perma Failures</h2>
+    {{range .Permas}}
+    <div class="component-group">
+      <h3>{{.Name}}</h3>
+      <ul class="buglist">
+        {{range .Bugs}}
+        <li>
+          <a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
+          <ul class="details">
+            <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
+            {{if .Platforms}}
+              <li>Platforms:
+                <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
+              </li>
+            {{end}}
+            {{if .BreakdownList}}
+              <li>Repository Breakdown:
+                <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
+              </li>
+            {{end}}
+            {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
+            {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
+          </ul>
+        </li>
+        {{end}}
+      </ul>
+    </div>
+    {{end}}
+  </div>
+{{end}}
+
+<script>
+document.querySelectorAll('ul.subdetails li').forEach(el => {
+  el.innerHTML = el.innerHTML.replace(/(:\s*)(\d+)/g, '$1<b>$2</b>');
+});
+</script>
+</body></html>
