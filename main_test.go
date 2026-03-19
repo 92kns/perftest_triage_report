@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -256,5 +258,48 @@ func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 	}
 	if results[1].ID != 100 || results[1].NumberFailures != 50 {
 		t.Errorf("second result should be bug 100 with 50 failures, got bug %d with %d", results[1].ID, results[1].NumberFailures)
+	}
+}
+
+func TestRenderHTML(t *testing.T) {
+	results := []Result{
+		{ID: 1234, Summary: "Intermittent raptor timeout", Component: "Raptor", NumberFailures: 42,
+			Link: "https://bugzilla.mozilla.org/show_bug.cgi?id=1234", GraphLink: "https://treeherder.mozilla.org/",
+			Platforms: []string{"linux1804: 3"}, BreakdownList: []string{"autoland: 3"}},
+	}
+	permas := []PermaBug{
+		{ID: 5678, Summary: "Perma talos failure", Component: "Talos",
+			Link: "https://bugzilla.mozilla.org/show_bug.cgi?id=5678", GraphLink: "https://treeherder.mozilla.org/"},
+	}
+
+	writeHTMLReport(results, permas)
+
+	// Use renderHTML directly with a buffer to verify output
+	var buf bytes.Buffer
+	data := struct {
+		Intermittents []ComponentGroup[Result]
+		Permas        []ComponentGroup[PermaBug]
+		Generated     string
+	}{
+		Intermittents: groupByComponent(results, components),
+		Permas:        groupByComponent(permas, components),
+		Generated:     "2026-03-19 09:00 UTC",
+	}
+
+	tmpl := buildTemplate()
+	if err := renderHTML(&buf, tmpl, data); err != nil {
+		t.Fatalf("renderHTML failed: %v", err)
+	}
+
+	html := buf.String()
+	for _, want := range []string{
+		"Bug 1234", "Intermittent raptor timeout", "Raptor",
+		"42", "linux1804: 3", "autoland: 3",
+		"Bug 5678", "Perma talos failure", "Talos",
+		"PerfTest Triage Report",
+	} {
+		if !strings.Contains(html, want) {
+			t.Errorf("expected %q in HTML output", want)
+		}
 	}
 }

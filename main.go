@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -474,8 +475,8 @@ func analyzeAll(bugs []Bug, start, end string) []Result {
 
 // ===================== HTML =====================
 
-func writeHTMLReport(results []Result, permas []PermaBug) {
-	tmpl := `
+func buildTemplate() string {
+	return `
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><title>PerfTest Triage Report</title>
@@ -565,6 +566,10 @@ document.querySelectorAll('ul.subdetails li').forEach(el => {
 });
 </script>
 </body></html>`
+}
+
+func writeHTMLReport(results []Result, permas []PermaBug) {
+	tmpl := buildTemplate()
 
 	data := struct {
 		Intermittents []ComponentGroup[Result]
@@ -586,10 +591,14 @@ document.querySelectorAll('ul.subdetails li').forEach(el => {
 		}
 	}()
 
-	t := template.Must(template.New("report").Parse(tmpl))
-	if err := t.Execute(f, data); err != nil {
+	if err := renderHTML(f, tmpl, data); err != nil {
 		log.Fatalf("template exec: %v", err)
 	}
+}
+
+func renderHTML(w io.Writer, tmpl string, data any) error {
+	t := template.Must(template.New("report").Parse(tmpl))
+	return t.Execute(w, data)
 }
 
 // ===================== Open in browser =====================
