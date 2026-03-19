@@ -286,7 +286,7 @@ func TestRenderHTML(t *testing.T) {
 		Generated:     "2026-03-19 09:00 UTC",
 	}
 
-	tmpl := buildTemplate()
+	tmpl := reportTemplate
 	if err := renderHTML(&buf, tmpl, data); err != nil {
 		t.Fatalf("renderHTML failed: %v", err)
 	}
