@@ -1,6 +1,11 @@
 package main
 
-import "testing"
+import (
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
 
 func TestNormalizePlatform(t *testing.T) {
 	tests := []struct {
@@ -33,5 +38,187 @@ func TestNormalizePlatform(t *testing.T) {
 		if got != tt.expected {
 			t.Errorf("normalizePlatform(%q) = %q, want %q", tt.input, got, tt.expected)
 		}
+	}
+}
+
+func TestAggregateBreakdown(t *testing.T) {
+	failures := []THJobFailure{
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "raptor-tp6"},
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "raptor-tp6"},
+		{Platform: "windows11-64-2009-shippable", Tree: "autoland", TestSuite: "talos-g5"},
+		{Platform: "macosx1470-64-shippable", Tree: "mozilla-central", TestSuite: "raptor-speedometer"},
+		{Platform: "toolchains", Tree: "mozilla-central", TestSuite: "toolchain-linux64-custom-car"},
+	}
+
+	breakdowns, platforms := aggregateBreakdown(failures)
+
+	expectedBreakdowns := []string{"autoland: 3", "mozilla-central: 2"}
+	if len(breakdowns) != len(expectedBreakdowns) {
+		t.Fatalf("breakdowns: got %v, want %v", breakdowns, expectedBreakdowns)
+	}
+	for i, b := range breakdowns {
+		if b != expectedBreakdowns[i] {
+			t.Errorf("breakdown[%d]: got %q, want %q", i, b, expectedBreakdowns[i])
+		}
+	}
+
+	// toolchain-linux64-custom-car should resolve to "linux" via fallback
+	for _, want := range []string{"linux1804: 2", "macosx1470: 1", "windows11: 1", "linux: 1"} {
+		found := false
+		for _, got := range platforms {
+			if got == want {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("platforms: expected %q in %v", want, platforms)
+		}
+	}
+}
+
+func TestFetchTreeherderCounts(t *testing.T) {
+	bugID1, bugID2 := 1234, 5678
+	payload := []THFailure{
+		{BugID: &bugID1, BugCount: 142},
+		{BugID: &bugID2, BugCount: 37},
+		{BugID: nil, BugCount: 99}, // unclassified, should be ignored
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(payload)
+	}))
+	defer server.Close()
+
+	old := treeherderBase
+	treeherderBase = server.URL
+	defer func() { treeherderBase = old }()
+
+	counts := fetchTreeherderCounts("2026-03-12", "2026-03-19")
+
+	if counts[1234] != 142 {
+		t.Errorf("bug 1234: got %d, want 142", counts[1234])
+	}
+	if counts[5678] != 37 {
+		t.Errorf("bug 5678: got %d, want 37", counts[5678])
+	}
+	if _, ok := counts[0]; ok {
+		t.Error("nil bug_id should not be present in counts map")
+	}
+}
+
+func TestFetchTreeherderBreakdown(t *testing.T) {
+	payload := []THJobFailure{
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "raptor-tp6"},
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "raptor-tp6"},
+		{Platform: "android-hw-p6-13-0-arm64-shippable", Tree: "autoland", TestSuite: "raptor-speedometer"},
+		{Platform: "windows11-64-2009-shippable", Tree: "mozilla-central", TestSuite: "talos-g5"},
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(payload)
+	}))
+	defer server.Close()
+
+	old := treeherderBase
+	treeherderBase = server.URL
+	defer func() { treeherderBase = old }()
+
+	breakdowns, platforms := fetchTreeherderBreakdown(1234, "2026-03-12", "2026-03-19")
+
+	if len(breakdowns) != 2 {
+		t.Fatalf("breakdowns: got %v, want 2 entries", breakdowns)
+	}
+	if breakdowns[0] != "autoland: 3" {
+		t.Errorf("breakdowns[0]: got %q, want %q", breakdowns[0], "autoland: 3")
+	}
+	if breakdowns[1] != "mozilla-central: 1" {
+		t.Errorf("breakdowns[1]: got %q, want %q", breakdowns[1], "mozilla-central: 1")
+	}
+
+	for _, want := range []string{"android-hw-p6: 1", "linux1804: 2", "windows11: 1"} {
+		found := false
+		for _, got := range platforms {
+			if got == want {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("platforms: expected %q in %v", want, platforms)
+		}
+	}
+}
+
+func TestFetchIntermittentBugs(t *testing.T) {
+	payload := BugListResponse{Bugs: []Bug{
+		{ID: 1, Summary: "Intermittent raptor test failure"},
+		{ID: 2, Summary: "Perma talos regression"}, // should be filtered out
+		{ID: 3, Summary: "Intermittent AWSY failure"},
+	}}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(payload)
+	}))
+	defer server.Close()
+
+	old := bugzillaBase
+	bugzillaBase = server.URL
+	defer func() { bugzillaBase = old }()
+
+	bugs := fetchIntermittentBugs()
+
+	if len(bugs) != 2 {
+		t.Fatalf("got %d bugs, want 2 (perma should be filtered)", len(bugs))
+	}
+	for _, b := range bugs {
+		if b.ID == 2 {
+			t.Error("perma bug should have been filtered out")
+		}
+	}
+}
+
+func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
+	maxConcurrent = 5
+	// Treeherder counts server
+	bug1ID, bug2ID, bug3ID := 100, 200, 300
+	countsPayload := []THFailure{
+		{BugID: &bug1ID, BugCount: 50},  // above threshold
+		{BugID: &bug2ID, BugCount: 10},  // below threshold, should be excluded
+		{BugID: &bug3ID, BugCount: 100}, // above threshold, should sort first
+	}
+	breakdownPayload := []THJobFailure{
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "raptor-tp6"},
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.URL.Path == "/failures/" {
+			json.NewEncoder(w).Encode(countsPayload)
+		} else {
+			json.NewEncoder(w).Encode(breakdownPayload)
+		}
+	}))
+	defer server.Close()
+
+	old := treeherderBase
+	treeherderBase = server.URL
+	defer func() { treeherderBase = old }()
+
+	bugs := []Bug{
+		{ID: 100, Summary: "Intermittent raptor failure"},
+		{ID: 200, Summary: "Intermittent talos failure"},
+		{ID: 300, Summary: "Intermittent AWSY failure"},
+	}
+
+	results := analyzeAll(bugs)
+
+	if len(results) != 2 {
+		t.Fatalf("got %d results, want 2 (bug 200 below threshold)", len(results))
+	}
+	if results[0].ID != 300 || results[0].NumberFailures != 100 {
+		t.Errorf("first result should be bug 300 with 100 failures, got bug %d with %d", results[0].ID, results[0].NumberFailures)
+	}
+	if results[1].ID != 100 || results[1].NumberFailures != 50 {
+		t.Errorf("second result should be bug 100 with 50 failures, got bug %d with %d", results[1].ID, results[1].NumberFailures)
 	}
 }

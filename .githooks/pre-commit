@@ -1,0 +1,8 @@
+#!/bin/sh
+unformatted=$(gofmt -l .)
+if [ -n "$unformatted" ]; then
+    echo "Formatting issues found, running gofmt..."
+    gofmt -w .
+    echo "Files formatted. Please re-stage and commit."
+    exit 1
+fi

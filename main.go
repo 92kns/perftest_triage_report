@@ -25,7 +25,11 @@ const (
 	outputHTML    = "report.html"
 )
 
-var maxConcurrent int
+var (
+	maxConcurrent  int
+	bugzillaBase   = BugzillaURL
+	treeherderBase = TreeherderURL
+)
 
 var components = []string{"AWSY", "mozperftest", "Performance", "Raptor", "Talos"}
 
@@ -133,7 +137,7 @@ func fetchIntermittentBugs() []Bug {
 		params.Add("component", c)
 	}
 
-	resp, err := get(BugzillaURL + "?" + params.Encode())
+	resp, err := get(bugzillaBase + "?" + params.Encode())
 	if err != nil {
 		log.Fatalf("fetch intermittents failed: %v", err)
 	}
@@ -170,7 +174,7 @@ func fetchPermaBugs() []PermaBug {
 		params.Add("component", c)
 	}
 
-	resp, err := get(BugzillaURL + "?" + params.Encode())
+	resp, err := get(bugzillaBase + "?" + params.Encode())
 	if err != nil {
 		log.Fatalf("fetch failed: %v", err)
 	}
@@ -223,7 +227,7 @@ func fetchPermaBugs() []PermaBug {
 // ===================== Treeherder =====================
 
 func fetchTreeherderCounts(start, end string) map[int]int {
-	u := fmt.Sprintf("%s/failures/?startday=%s&endday=%s&tree=all", TreeherderURL, start, end)
+	u := fmt.Sprintf("%s/failures/?startday=%s&endday=%s&tree=all", treeherderBase, start, end)
 	resp, err := get(u)
 	if err != nil {
 		log.Fatalf("fetch treeherder counts: %v", err)
@@ -252,7 +256,7 @@ func fetchTreeherderCounts(start, end string) map[int]int {
 }
 
 func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string, platforms []string) {
-	u := fmt.Sprintf("%s/failuresbybug/?startday=%s&endday=%s&tree=all&bug=%d", TreeherderURL, start, end, bugID)
+	u := fmt.Sprintf("%s/failuresbybug/?startday=%s&endday=%s&tree=all&bug=%d", treeherderBase, start, end, bugID)
 	resp, err := get(u)
 	if err != nil {
 		return nil, nil
@@ -267,7 +271,10 @@ func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string
 	if err := json.NewDecoder(resp.Body).Decode(&failures); err != nil {
 		return nil, nil
 	}
+	return aggregateBreakdown(failures)
+}
 
+func aggregateBreakdown(failures []THJobFailure) (breakdowns []string, platforms []string) {
 	treeCounts := map[string]int{}
 	platformCounts := map[string]int{}
 	for _, f := range failures {
