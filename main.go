@@ -39,7 +39,7 @@ var (
 //go:embed template.html
 var reportTemplate string
 
-var components = []string{"AWSY", "mozperftest", "Performance", "Raptor", "Talos"}
+var components = []string{"AWSY", "Condprofile", "mozperftest", "Performance", "Raptor", "Talos"}
 
 type Bug struct {
 	ID        int    `json:"id"`
