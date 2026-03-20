@@ -291,7 +291,14 @@ func enrichPermas(permas []PermaBug, start, end string) []PermaBug {
 		}(i, p)
 	}
 	wg.Wait()
-	return permas
+
+	filtered := permas[:0]
+	for _, p := range permas {
+		if len(p.BreakdownList) > 0 || len(p.Platforms) > 0 {
+			filtered = append(filtered, p)
+		}
+	}
+	return filtered
 }
 
 // ===================== Treeherder =====================
