@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -10,6 +11,32 @@ import (
 	"testing"
 	"time"
 )
+
+func TestBugAge(t *testing.T) {
+	tests := []struct {
+		input    string
+		wantDays int
+	}{
+		{time.Now().UTC().AddDate(0, 0, -137).Format(time.RFC3339), 137},
+		{time.Now().UTC().AddDate(0, 0, -1).Format(time.RFC3339), 1},
+		{time.Now().UTC().Format(time.RFC3339), 0},
+		{"", -1}, // invalid — should return ""
+	}
+
+	for _, tt := range tests {
+		got := bugAge(tt.input)
+		if tt.wantDays == -1 {
+			if got != "" {
+				t.Errorf("bugAge(%q) = %q, want empty string", tt.input, got)
+			}
+			continue
+		}
+		want := fmt.Sprintf("%d days", tt.wantDays)
+		if got != want {
+			t.Errorf("bugAge(%q) = %q, want %q", tt.input, got, want)
+		}
+	}
+}
 
 func TestGroupByComponent(t *testing.T) {
 	results := []Result{

@@ -39,6 +39,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
           <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
         </li>
       {{end}}
+      {{if .Age}}<li>Opened: {{.Age}} ago</li>{{end}}
       {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
       {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
     </ul>
@@ -70,6 +71,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
                 <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
               </li>
             {{end}}
+            {{if .Age}}<li>Opened: {{.Age}} ago</li>{{end}}
             {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
             {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
           </ul>

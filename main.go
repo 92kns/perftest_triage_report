@@ -42,10 +42,11 @@ var reportTemplate string
 var components = []string{"AWSY", "Condprofile", "mozperftest", "Performance", "Raptor", "Talos"}
 
 type Bug struct {
-	ID        int    `json:"id"`
-	Summary   string `json:"summary"`
-	Component string `json:"component"`
-	Flags     []struct {
+	ID           int    `json:"id"`
+	Summary      string `json:"summary"`
+	Component    string `json:"component"`
+	CreationTime string `json:"creation_time"`
+	Flags        []struct {
 		Name      string `json:"name"`
 		Requestee string `json:"requestee"`
 	} `json:"flags,omitempty"`
@@ -62,6 +63,7 @@ type Result struct {
 	NumberFailures int
 	Summary        string
 	Component      string
+	Age            string
 	Platforms      []string
 	BreakdownList  []string
 	Needinfo       string
@@ -74,6 +76,7 @@ type PermaBug struct {
 	Link          string
 	Summary       string
 	Component     string
+	Age           string
 	Assignee      string
 	GraphLink     string
 	Needinfo      string
@@ -92,6 +95,15 @@ type hasComponent interface {
 
 func (r Result) component() string   { return r.Component }
 func (p PermaBug) component() string { return p.Component }
+
+func bugAge(creationTime string) string {
+	t, err := time.Parse(time.RFC3339, creationTime)
+	if err != nil {
+		return ""
+	}
+	days := int(time.Since(t).Hours() / 24)
+	return fmt.Sprintf("%d days", days)
+}
 
 func groupByComponent[T hasComponent](items []T, order []string) []ComponentGroup[T] {
 	m := map[string][]T{}
@@ -202,7 +214,7 @@ func fetchIntermittentBugs() []Bug {
 	params.Set("keywords", "intermittent-failure")
 	params.Set("keywords_type", "allwords")
 	params.Set("resolution", "---")
-	params.Set("include_fields", "id,summary,component,flags,assigned_to")
+	params.Set("include_fields", "id,summary,component,creation_time,flags,assigned_to")
 
 	for _, c := range components {
 		params.Add("component", c)
@@ -238,7 +250,7 @@ func fetchPermaBugs(start, end string) []PermaBug {
 	params.Set("short_desc", "Perma")
 	params.Set("short_desc_type", "allwordssubstr")
 	params.Set("last_change_time", start)
-	params.Set("include_fields", "id,summary,component,assigned_to,flags")
+	params.Set("include_fields", "id,summary,component,creation_time,assigned_to,flags")
 	params.Set("keywords", "intermittent-failure")
 
 	for _, c := range components {
@@ -283,6 +295,7 @@ func fetchPermaBugs(start, end string) []PermaBug {
 			Link:      fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
 			Summary:   b.Summary,
 			Component: b.Component,
+			Age:       bugAge(b.CreationTime),
 			Assignee:  assignee,
 			GraphLink: graphURL,
 			Needinfo:  ni,
@@ -488,6 +501,7 @@ func analyzeAll(bugs []Bug, start, end string) []Result {
 				NumberFailures: counts[b.ID],
 				Summary:        b.Summary,
 				Component:      b.Component,
+				Age:            bugAge(b.CreationTime),
 				Platforms:      platforms,
 				BreakdownList:  breakdowns,
 				Needinfo:       ni,
