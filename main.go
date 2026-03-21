@@ -162,15 +162,36 @@ func main() {
 }
 
 var httpClient = &http.Client{Timeout: 60 * time.Second}
+var retrySleep = func(d time.Duration) { time.Sleep(d) }
 
 func get(u string) (*http.Response, error) {
-	req, err := http.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
+	var lastErr error
+	for attempt := range 3 {
+		if attempt > 0 {
+			retrySleep(time.Duration(1<<uint(attempt-1)) * time.Second)
+		}
+		req, err := http.NewRequest("GET", u, nil)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("User-Agent", "mozilla-perftest-report/1.0")
+
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			lastErr = err
+			log.Printf("request failed (attempt %d/3): %v", attempt+1, err)
+			continue
+		}
+		if resp.StatusCode >= 500 {
+			resp.Body.Close()
+			lastErr = fmt.Errorf("status %s", resp.Status)
+			log.Printf("server error (attempt %d/3): %s", attempt+1, resp.Status)
+			continue
+		}
+		return resp, nil
 	}
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "mozilla-perftest-report/1.0")
-	return httpClient.Do(req)
+	return nil, lastErr
 }
 
 // ===================== Fetchers =====================

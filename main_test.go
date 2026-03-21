@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync/atomic"
 	"testing"
+	"time"
 )
 
 func TestGroupByComponent(t *testing.T) {
@@ -381,5 +383,56 @@ func TestEnrichPermas(t *testing.T) {
 		if len(p.Platforms) == 0 {
 			t.Errorf("bug %d: expected platforms to be populated", p.ID)
 		}
+	}
+}
+
+func TestGetRetry(t *testing.T) {
+	retrySleep = func(time.Duration) {}
+	defer func() { retrySleep = func(d time.Duration) { time.Sleep(d) } }()
+	var attempts atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		n := attempts.Add(1)
+		if n < 3 {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		if _, err := w.Write([]byte(`"ok"`)); err != nil {
+			t.Errorf("failed to write response: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	resp, err := get(server.URL)
+	if err != nil {
+		t.Fatalf("expected success after retries, got: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if attempts.Load() != 3 {
+		t.Errorf("expected 3 attempts, got %d", attempts.Load())
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("expected 200, got %d", resp.StatusCode)
+	}
+}
+
+func TestGetRetryExhausted(t *testing.T) {
+	retrySleep = func(time.Duration) {}
+	defer func() { retrySleep = func(d time.Duration) { time.Sleep(d) } }()
+	var attempts atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts.Add(1)
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	resp, err := get(server.URL)
+	if err == nil {
+		resp.Body.Close()
+		t.Fatal("expected error after exhausting retries, got nil")
+	}
+	if attempts.Load() != 3 {
+		t.Errorf("expected 3 attempts, got %d", attempts.Load())
 	}
 }
