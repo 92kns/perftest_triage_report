@@ -64,6 +64,7 @@ type Result struct {
 	Summary        string
 	Component      string
 	Age            string
+	Rate           string
 	Platforms      []string
 	BreakdownList  []string
 	Needinfo       string
@@ -129,6 +130,11 @@ type THJobFailure struct {
 	Platform  string `json:"platform"`
 	Tree      string `json:"tree"`
 	TestSuite string `json:"test_suite"`
+}
+
+type THDailyCount struct {
+	TestRuns     int `json:"test_runs"`
+	FailureCount int `json:"failure_count"`
 }
 
 func main() {
@@ -385,6 +391,34 @@ func fetchTreeherderBreakdown(bugID int, start, end string) (breakdowns []string
 	return aggregateBreakdown(failures)
 }
 
+func fetchFailureRate(bugID int, start, end string) string {
+	u := fmt.Sprintf("%s/failurecount/?startday=%s&endday=%s&tree=all&bug=%d", treeherderBase, start, end, bugID)
+	resp, err := get(u)
+	if err != nil {
+		return ""
+	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("warning: error closing body: %v", err)
+		}
+	}()
+
+	var days []THDailyCount
+	if err := json.NewDecoder(resp.Body).Decode(&days); err != nil {
+		return ""
+	}
+
+	var totalRuns, totalFailures int
+	for _, d := range days {
+		totalRuns += d.TestRuns
+		totalFailures += d.FailureCount
+	}
+	if totalRuns == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%.1f%%", float64(totalFailures)/float64(totalRuns)*100)
+}
+
 func aggregateBreakdown(failures []THJobFailure) (breakdowns []string, platforms []string) {
 	treeCounts := map[string]int{}
 	platformCounts := map[string]int{}
@@ -475,6 +509,7 @@ func analyzeAll(bugs []Bug, start, end string) []Result {
 			defer func() { <-sema }()
 
 			breakdowns, platforms := fetchTreeherderBreakdown(b.ID, start, end)
+			rate := fetchFailureRate(b.ID, start, end)
 
 			ni := ""
 			for _, flag := range b.Flags {
@@ -502,6 +537,7 @@ func analyzeAll(bugs []Bug, start, end string) []Result {
 				Summary:        b.Summary,
 				Component:      b.Component,
 				Age:            bugAge(b.CreationTime),
+				Rate:           rate,
 				Platforms:      platforms,
 				BreakdownList:  breakdowns,
 				Needinfo:       ni,

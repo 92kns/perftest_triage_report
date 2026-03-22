@@ -97,6 +97,51 @@ func TestNormalizePlatform(t *testing.T) {
 	}
 }
 
+func TestFetchFailureRate(t *testing.T) {
+	payload := []THDailyCount{
+		{TestRuns: 100, FailureCount: 10},
+		{TestRuns: 200, FailureCount: 30},
+		{TestRuns: 100, FailureCount: 10},
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(payload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	old := treeherderBase
+	treeherderBase = server.URL
+	defer func() { treeherderBase = old }()
+
+	rate := fetchFailureRate(1234, "2026-03-14", "2026-03-21")
+	// 50 failures / 400 runs = 12.5%
+	if rate != "12.5%" {
+		t.Errorf("got %q, want %q", rate, "12.5%")
+	}
+}
+
+func TestFetchFailureRateZeroRuns(t *testing.T) {
+	payload := []THDailyCount{{TestRuns: 0, FailureCount: 0}}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(payload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	old := treeherderBase
+	treeherderBase = server.URL
+	defer func() { treeherderBase = old }()
+
+	rate := fetchFailureRate(1234, "2026-03-14", "2026-03-21")
+	if rate != "" {
+		t.Errorf("expected empty string for zero runs, got %q", rate)
+	}
+}
+
 func TestAggregateBreakdown(t *testing.T) {
 	failures := []THJobFailure{
 		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "raptor-tp6"},
