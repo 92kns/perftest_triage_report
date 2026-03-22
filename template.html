@@ -28,7 +28,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
     <ul class="details">
       <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>{{.NumberFailures}}</b> Failures{{if .Rate}} ({{.Rate}} rate){{end}}</li>
+      <li><b>{{.NumberFailures}}</b> Failures{{if .Rate}} ({{.Rate}} rate){{end}}{{if .Trend}} {{.Trend}}{{end}}</li>
       {{if .Platforms}}
         <li>Platforms:
           <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>

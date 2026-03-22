@@ -65,6 +65,7 @@ type Result struct {
 	Component      string
 	Age            string
 	Rate           string
+	Trend          string
 	Platforms      []string
 	BreakdownList  []string
 	Needinfo       string
@@ -104,6 +105,20 @@ func bugAge(creationTime string) string {
 	}
 	days := int(time.Since(t).Hours() / 24)
 	return fmt.Sprintf("%d days", days)
+}
+
+func computeTrend(current, previous int) string {
+	if previous == 0 {
+		return "🆕"
+	}
+	delta := current - previous
+	if delta > 0 {
+		return fmt.Sprintf("↑ +%d", delta)
+	}
+	if delta < 0 {
+		return fmt.Sprintf("↓ %d", delta)
+	}
+	return ""
 }
 
 func groupByComponent[T hasComponent](items []T, order []string) []ComponentGroup[T] {
@@ -155,16 +170,19 @@ func main() {
 
 	startDay := time.Now().AddDate(0, 0, -daysBack).Format("2006-01-02")
 	endDay := time.Now().Format("2006-01-02")
+	prevStartDay := time.Now().AddDate(0, 0, -daysBack*2).Format("2006-01-02")
 
 	var interBugs []Bug
 	var rawPermas []PermaBug
+	var prevCounts map[int]int
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(3)
 	go func() { defer wg.Done(); interBugs = fetchIntermittentBugs() }()
 	go func() { defer wg.Done(); rawPermas = fetchPermaBugs(startDay, endDay) }()
+	go func() { defer wg.Done(); prevCounts = fetchTreeherderCounts(prevStartDay, startDay) }()
 	wg.Wait()
 
-	results := analyzeAll(interBugs, startDay, endDay)
+	results := analyzeAll(interBugs, startDay, endDay, prevCounts)
 	permas := enrichPermas(rawPermas, startDay, endDay)
 
 	if len(results) == 0 && len(permas) == 0 {
@@ -481,7 +499,7 @@ func normalizePlatform(platform string) string {
 
 // ===================== Analyzer =====================
 
-func analyzeAll(bugs []Bug, start, end string) []Result {
+func analyzeAll(bugs []Bug, start, end string, prevCounts map[int]int) []Result {
 	if len(bugs) == 0 {
 		return nil
 	}
@@ -538,6 +556,7 @@ func analyzeAll(bugs []Bug, start, end string) []Result {
 				Component:      b.Component,
 				Age:            bugAge(b.CreationTime),
 				Rate:           rate,
+				Trend:          computeTrend(counts[b.ID], prevCounts[b.ID]),
 				Platforms:      platforms,
 				BreakdownList:  breakdowns,
 				Needinfo:       ni,

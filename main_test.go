@@ -12,6 +12,24 @@ import (
 	"time"
 )
 
+func TestComputeTrend(t *testing.T) {
+	tests := []struct {
+		current, previous int
+		want              string
+	}{
+		{50, 0, "🆕"},       // new this week
+		{100, 60, "↑ +40"}, // spiking
+		{30, 50, "↓ -20"},  // improving
+		{50, 50, ""},       // no change
+	}
+	for _, tt := range tests {
+		got := computeTrend(tt.current, tt.previous)
+		if got != tt.want {
+			t.Errorf("computeTrend(%d, %d) = %q, want %q", tt.current, tt.previous, got, tt.want)
+		}
+	}
+}
+
 func TestBugAge(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -322,7 +340,8 @@ func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 		{ID: 300, Summary: "Intermittent AWSY failure"},
 	}
 
-	results := analyzeAll(bugs, "2026-03-12", "2026-03-19")
+	prevCounts := map[int]int{100: 30, 300: 60}
+	results := analyzeAll(bugs, "2026-03-12", "2026-03-19", prevCounts)
 
 	if len(results) != 2 {
 		t.Fatalf("got %d results, want 2 (bug 200 below threshold)", len(results))
@@ -332,6 +351,12 @@ func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 	}
 	if results[1].ID != 100 || results[1].NumberFailures != 50 {
 		t.Errorf("second result should be bug 100 with 50 failures, got bug %d with %d", results[1].ID, results[1].NumberFailures)
+	}
+	if results[0].Trend != "↑ +40" {
+		t.Errorf("bug 300 trend: got %q, want %q", results[0].Trend, "↑ +40")
+	}
+	if results[1].Trend != "↑ +20" {
+		t.Errorf("bug 100 trend: got %q, want %q", results[1].Trend, "↑ +20")
 	}
 }
 
