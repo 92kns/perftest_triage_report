@@ -504,7 +504,7 @@ func TestGetRetry(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected success after retries, got: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if attempts.Load() != 3 {
 		t.Errorf("expected 3 attempts, got %d", attempts.Load())
@@ -526,7 +526,7 @@ func TestGetRetryExhausted(t *testing.T) {
 
 	resp, err := get(server.URL)
 	if err == nil {
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		t.Fatal("expected error after exhausting retries, got nil")
 	}
 	if attempts.Load() != 3 {

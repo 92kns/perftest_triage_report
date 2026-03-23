@@ -220,7 +220,7 @@ func get(u string) (*http.Response, error) {
 			continue
 		}
 		if resp.StatusCode >= 500 {
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			lastErr = fmt.Errorf("status %s", resp.Status)
 			log.Printf("server error (attempt %d/3): %s", attempt+1, resp.Status)
 			continue
