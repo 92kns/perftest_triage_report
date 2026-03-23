@@ -215,7 +215,9 @@ func get(u string) (*http.Response, error) {
 
 		resp, err := httpClient.Do(req)
 		if err != nil {
-			return nil, err
+			lastErr = err
+			log.Printf("request failed (attempt %d/3): %v", attempt+1, err)
+			continue
 		}
 		if resp.StatusCode >= 500 {
 			resp.Body.Close()
