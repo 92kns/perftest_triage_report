@@ -66,6 +66,9 @@ type Result struct {
 	Age            string
 	Rate           string
 	Trend          string
+	TwoDay         int
+	TwoDayRate     string
+	TwoDayTrend    string
 	Platforms      []string
 	BreakdownList  []string
 	Needinfo       string
@@ -171,18 +174,22 @@ func main() {
 	startDay := time.Now().AddDate(0, 0, -daysBack).Format("2006-01-02")
 	endDay := time.Now().Format("2006-01-02")
 	prevStartDay := time.Now().AddDate(0, 0, -daysBack*2).Format("2006-01-02")
+	twoDayStart := time.Now().AddDate(0, 0, -2).Format("2006-01-02")
+	prevTwoDayStart := time.Now().AddDate(0, 0, -4).Format("2006-01-02")
 
 	var interBugs []Bug
 	var rawPermas []PermaBug
-	var prevCounts map[int]int
+	var prevCounts, twoDayCounts, prevTwoDayCounts map[int]int
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(5)
 	go func() { defer wg.Done(); interBugs = fetchIntermittentBugs() }()
 	go func() { defer wg.Done(); rawPermas = fetchPermaBugs(startDay, endDay) }()
 	go func() { defer wg.Done(); prevCounts = fetchTreeherderCounts(prevStartDay, startDay) }()
+	go func() { defer wg.Done(); twoDayCounts = fetchTreeherderCounts(twoDayStart, endDay) }()
+	go func() { defer wg.Done(); prevTwoDayCounts = fetchTreeherderCounts(prevTwoDayStart, twoDayStart) }()
 	wg.Wait()
 
-	results := analyzeAll(interBugs, startDay, endDay, prevCounts)
+	results := analyzeAll(interBugs, startDay, endDay, prevCounts, twoDayStart, twoDayCounts, prevTwoDayCounts)
 	permas := enrichPermas(rawPermas, startDay, endDay)
 
 	if len(results) == 0 && len(permas) == 0 {
@@ -499,7 +506,7 @@ func normalizePlatform(platform string) string {
 
 // ===================== Analyzer =====================
 
-func analyzeAll(bugs []Bug, start, end string, prevCounts map[int]int) []Result {
+func analyzeAll(bugs []Bug, start, end string, prevCounts map[int]int, twoDayStart string, twoDayCounts, prevTwoDayCounts map[int]int) []Result {
 	if len(bugs) == 0 {
 		return nil
 	}
@@ -529,6 +536,13 @@ func analyzeAll(bugs []Bug, start, end string, prevCounts map[int]int) []Result 
 			breakdowns, platforms := fetchTreeherderBreakdown(b.ID, start, end)
 			rate := fetchFailureRate(b.ID, start, end)
 
+			twoDayCount := twoDayCounts[b.ID]
+			twoDayRate, twoDayTrend := "", ""
+			if twoDayCount > 0 {
+				twoDayRate = fetchFailureRate(b.ID, twoDayStart, end)
+				twoDayTrend = computeTrend(twoDayCount, prevTwoDayCounts[b.ID])
+			}
+
 			ni := ""
 			for _, flag := range b.Flags {
 				if flag.Name == "needinfo" && flag.Requestee != "" {
@@ -557,6 +571,9 @@ func analyzeAll(bugs []Bug, start, end string, prevCounts map[int]int) []Result 
 				Age:            bugAge(b.CreationTime),
 				Rate:           rate,
 				Trend:          computeTrend(counts[b.ID], prevCounts[b.ID]),
+				TwoDay:         twoDayCount,
+				TwoDayRate:     twoDayRate,
+				TwoDayTrend:    twoDayTrend,
 				Platforms:      platforms,
 				BreakdownList:  breakdowns,
 				Needinfo:       ni,
@@ -576,17 +593,21 @@ func analyzeAll(bugs []Bug, start, end string, prevCounts map[int]int) []Result 
 
 // ===================== HTML =====================
 
+type reportData struct {
+	Intermittents []ComponentGroup[Result]
+	Permas        []ComponentGroup[PermaBug]
+	Generated     string
+	DaysBack      int
+}
+
 func writeHTMLReport(results []Result, permas []PermaBug) {
 	tmpl := reportTemplate
 
-	data := struct {
-		Intermittents []ComponentGroup[Result]
-		Permas        []ComponentGroup[PermaBug]
-		Generated     string
-	}{
+	data := reportData{
 		Intermittents: groupByComponent(results, components),
 		Permas:        groupByComponent(permas, components),
 		Generated:     time.Now().UTC().Format("2006-01-02 15:04 MST"),
+		DaysBack:      daysBack,
 	}
 
 	f, err := os.Create(outputHTML)

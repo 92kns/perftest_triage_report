@@ -341,7 +341,7 @@ func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 	}
 
 	prevCounts := map[int]int{100: 30, 300: 60}
-	results := analyzeAll(bugs, "2026-03-12", "2026-03-19", prevCounts)
+	results := analyzeAll(bugs, "2026-03-12", "2026-03-19", prevCounts, "2026-03-17", map[int]int{}, map[int]int{})
 
 	if len(results) != 2 {
 		t.Fatalf("got %d results, want 2 (bug 200 below threshold)", len(results))
@@ -375,14 +375,11 @@ func TestRenderHTML(t *testing.T) {
 
 	// Use renderHTML directly with a buffer to verify output
 	var buf bytes.Buffer
-	data := struct {
-		Intermittents []ComponentGroup[Result]
-		Permas        []ComponentGroup[PermaBug]
-		Generated     string
-	}{
+	data := reportData{
 		Intermittents: groupByComponent(results, components),
 		Permas:        groupByComponent(permas, components),
 		Generated:     "2026-03-19 09:00 UTC",
+		DaysBack:      7,
 	}
 
 	tmpl := reportTemplate
