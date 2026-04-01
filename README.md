@@ -1,27 +1,31 @@
 # Perftest Triage Report Generator
 
-A Go CLI tool that automates the generation of weekly performance test triage reports by querying Bugzilla and Treeherder for:
+A Go CLI tool that automates the generation of weekly performance test triage reports by querying Bugzilla and Treeherder for intermittent failures, perma failures, and generic task timeouts affecting perf tests.
 
-- 🟧 Intermittent test failures with high failure counts (>=20)
-- 🟥 Recent "Perma" bugs based on title substring
-- Repository and platform breakdown (via Treeherder API)
-- Assigned developer and NEEDINFO status
-- Outputs a ready-to-copy HTML report
-
-Useful for perftest triage sessions where engineers need a concise and accurate snapshot of the week’s flakiest or most problematic bugs.
+Useful for perftest triage sessions where engineers need a concise and accurate snapshot of the week's flakiest or most problematic bugs.
 
 ---
 
-## Current Features
+## Report Sections
 
-- **Intermittent Bugs** (over threshold)
-- **Perma Bugs** (identified by title)
-- **OrangeFactor Graphs** (last 7 days)
-- Platform and repository breakdown (sourced directly from Treeherder API)
-- Bugs grouped by component: AWSY, Condprofile, mozperftest, Performance, Raptor, Talos
-- **Assigned To** and **NEEDINFO** tracking
-- Generates `report.html`
-- Daily report generated at 0900 UTC and published to pages
+- 🟧 **Intermittent Failures** — open bugs with `intermittent-failure` keyword, filtered to those meeting the failure threshold
+- 🟥 **Perma Failures** — open bugs with "Perma" in the title, active in the report window
+- 🔶 **Generic Task Timeout** — perf-test failures (browsertime, talos, perftest, awsy) from [Bug 1809667](https://bugzilla.mozilla.org/show_bug.cgi?id=1809667), always reported separately
+
+All sections are grouped by component: AWSY, Condprofile, mozperftest, Performance, Raptor, Talos.
+
+---
+
+## Features
+
+- **Dual time windows** — primary window (default 7d) and a 2-day snapshot for each bug, showing recent activity alongside the weekly view
+- **Failure rate** — expressed as failures per push to the tree (sourced from Treeherder `/failurecount/`)
+- **Week-over-week trend** — `↑ +N` / `↓ N` comparing the current 7d window against the prior 7d window
+- **Platform and repository breakdown** — for both 7d and 2d windows
+- **Suite breakdown** — for the Generic Task Timeout section
+- **Bug age**, **Assigned To**, and **NEEDINFO** tracking
+- **OrangeFactor graph links** per bug
+- Daily report published at 0900 UTC to GitHub Pages
 
 ---
 
@@ -37,18 +41,25 @@ Generates `report.html` and opens it in your browser.
 
 ### CLI flags
 
-| Flag             | Default | Description                                        |
-|------------------|---------|----------------------------------------------------|
-| `--no-open`      | false   | Do not open the browser after report is generated |
-| `--concurrency`  | 5       | Max concurrent Treeherder breakdown API calls     |
-| `--threshold`    | 20      | Minimum failure count to include a bug            |
-| `--days`         | 7       | Number of days back to query                      |
+| Flag            | Default | Description                                    |
+|-----------------|---------|------------------------------------------------|
+| `--no-open`     | false   | Do not open the browser after report generates |
+| `--concurrency` | 10      | Max concurrent Treeherder API calls            |
+| `--threshold`   | 20      | Minimum failure count to include a bug         |
+| `--days`        | 7       | Primary window size in days                    |
 
 ---
 
-## Development Setup
+## Development
 
-To enable the pre-push hook that runs tests before each push:
+Run tests:
+
+```bash
+go test ./...
+go test -race ./...
+```
+
+Enable the pre-push hook that runs tests before each push:
 
 ```bash
 git config core.hooksPath .githooks
@@ -58,8 +69,6 @@ git config core.hooksPath .githooks
 
 ## Build
 
-To compile a standalone binary:
-
 ```bash
 go build -o perftest-report main.go
 ./perftest-report --no-open
@@ -67,23 +76,9 @@ go build -o perftest-report main.go
 
 ---
 
-## Output Example
+## Output
 
-See the latest published report here:
-
-https://92kns.github.io/perftest_triage_report/
-
-HTML includes:
-- Intermittent bug summaries with repo and platform breakdowns
-- Links to OrangeFactor graphs
-- Perma bugs from last 7 days
-
----
-
-## Future Ideas
-
-- Trend reporting/detection using Treeherder historical data
-- Archiving weekly reports in repo history
+Latest published report: https://92kns.github.io/perftest_triage_report/
 
 ---
 
