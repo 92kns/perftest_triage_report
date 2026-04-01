@@ -68,7 +68,6 @@ type Result struct {
 	Trend          string
 	TwoDay         int
 	TwoDayRate     string
-	TwoDayTrend    string
 	Platforms      []string
 	BreakdownList  []string
 	Needinfo       string
@@ -179,19 +178,16 @@ func main() {
 	endDay := time.Now().Format("2006-01-02")
 	prevStartDay := time.Now().AddDate(0, 0, -daysBack*2).Format("2006-01-02")
 	twoDayStart := time.Now().AddDate(0, 0, -2).Format("2006-01-02")
-	prevTwoDayStart := time.Now().AddDate(0, 0, -4).Format("2006-01-02")
-
 	var interBugs []Bug
 	var rawPermas []PermaBug
-	var currentCounts, prevCounts, twoDayCounts, prevTwoDayCounts map[int]int
+	var currentCounts, prevCounts, twoDayCounts map[int]int
 	var wg sync.WaitGroup
-	wg.Add(6)
+	wg.Add(5)
 	go func() { defer wg.Done(); interBugs = fetchIntermittentBugs() }()
 	go func() { defer wg.Done(); rawPermas = fetchPermaBugs(startDay, endDay) }()
 	go func() { defer wg.Done(); currentCounts = fetchTreeherderCounts(startDay, endDay) }()
 	go func() { defer wg.Done(); prevCounts = fetchTreeherderCounts(prevStartDay, startDay) }()
 	go func() { defer wg.Done(); twoDayCounts = fetchTreeherderCounts(twoDayStart, endDay) }()
-	go func() { defer wg.Done(); prevTwoDayCounts = fetchTreeherderCounts(prevTwoDayStart, twoDayStart) }()
 	wg.Wait()
 
 	var results []Result
@@ -200,7 +196,7 @@ func main() {
 	wg2.Add(2)
 	go func() {
 		defer wg2.Done()
-		results = analyzeAll(interBugs, startDay, endDay, currentCounts, prevCounts, twoDayStart, twoDayCounts, prevTwoDayCounts)
+		results = analyzeAll(interBugs, startDay, endDay, currentCounts, prevCounts, twoDayStart, twoDayCounts)
 	}()
 	go func() {
 		defer wg2.Done()
@@ -527,7 +523,7 @@ func normalizePlatform(platform string) string {
 
 // ===================== Analyzer =====================
 
-func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, twoDayStart string, twoDayCounts, prevTwoDayCounts map[int]int) []Result {
+func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, twoDayStart string, twoDayCounts map[int]int) []Result {
 	if len(bugs) == 0 {
 		return nil
 	}
@@ -556,16 +552,9 @@ func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, t
 			rate := fetchFailureRate(b.ID, start, end)
 
 			twoDayCount := twoDayCounts[b.ID]
-			twoDayRate, twoDayTrend := "", ""
+			twoDayRate := ""
 			if twoDayCount > 0 {
 				twoDayRate = fetchFailureRate(b.ID, twoDayStart, end)
-				prev := prevTwoDayCounts[b.ID]
-				delta := twoDayCount - prev
-				if delta > 0 {
-					twoDayTrend = fmt.Sprintf("↑ +%d", delta)
-				} else if delta < 0 {
-					twoDayTrend = fmt.Sprintf("↓ %d", delta)
-				}
 			}
 
 			ni := ""
@@ -598,7 +587,6 @@ func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, t
 				Trend:          computeTrend(counts[b.ID], prevCounts[b.ID]),
 				TwoDay:         twoDayCount,
 				TwoDayRate:     twoDayRate,
-				TwoDayTrend:    twoDayTrend,
 				Platforms:      platforms,
 				BreakdownList:  breakdowns,
 				Needinfo:       ni,

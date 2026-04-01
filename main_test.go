@@ -329,7 +329,7 @@ func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 
 	counts := map[int]int{100: 50, 200: 10, 300: 100}
 	prevCounts := map[int]int{100: 30, 300: 60}
-	results := analyzeAll(bugs, "2026-03-12", "2026-03-19", counts, prevCounts, "2026-03-17", map[int]int{}, map[int]int{})
+	results := analyzeAll(bugs, "2026-03-12", "2026-03-19", counts, prevCounts, "2026-03-17", map[int]int{})
 
 	if len(results) != 2 {
 		t.Fatalf("got %d results, want 2 (bug 200 below threshold)", len(results))
