@@ -100,9 +100,12 @@ type TaskTimeoutReport struct {
 	GraphLink            string
 	PerfFailures         int
 	SuiteBreakdown       []string
+	TreeBreakdown        []string
 	Platforms            []string
 	TwoDayPerfFailures   int
 	TwoDaySuiteBreakdown []string
+	TwoDayTreeBreakdown  []string
+	TwoDayPlatforms      []string
 }
 
 type ComponentGroup[T any] struct {
@@ -638,6 +641,34 @@ func filterPerfFailures(failures []THJobFailure) []THJobFailure {
 	return perf
 }
 
+func treeBreakdownFrom(failures []THJobFailure) []string {
+	counts := map[string]int{}
+	for _, f := range failures {
+		counts[f.Tree]++
+	}
+	var out []string
+	for tree, count := range counts {
+		out = append(out, fmt.Sprintf("%s: %d", tree, count))
+	}
+	sort.Strings(out)
+	return out
+}
+
+func platformBreakdownFrom(failures []THJobFailure) []string {
+	counts := map[string]int{}
+	for _, f := range failures {
+		if p := normalizePlatform(f.Platform); p != "" {
+			counts[p]++
+		}
+	}
+	var out []string
+	for p, count := range counts {
+		out = append(out, fmt.Sprintf("%s: %d", p, count))
+	}
+	sort.Strings(out)
+	return out
+}
+
 func suiteBreakdownFrom(perf []THJobFailure) []string {
 	counts := map[string]int{}
 	for _, f := range perf {
@@ -672,24 +703,10 @@ func fetchRawBreakdown(bugID int, start, end string) []THJobFailure {
 }
 
 func analyzeTaskTimeout(start, end, twoDayStart string) *TaskTimeoutReport {
-	failures := fetchRawBreakdown(taskTimeoutBugID, start, end)
-	perf := filterPerfFailures(failures)
+	perf := filterPerfFailures(fetchRawBreakdown(taskTimeoutBugID, start, end))
 	if len(perf) == 0 {
 		return nil
 	}
-
-	platformCounts := map[string]int{}
-	for _, f := range perf {
-		if p := normalizePlatform(f.Platform); p != "" {
-			platformCounts[p]++
-		}
-	}
-	var platforms []string
-	for p, count := range platformCounts {
-		platforms = append(platforms, fmt.Sprintf("%s: %d", p, count))
-	}
-	sort.Strings(platforms)
-
 	twoDayPerf := filterPerfFailures(fetchRawBreakdown(taskTimeoutBugID, twoDayStart, end))
 
 	return &TaskTimeoutReport{
@@ -700,9 +717,12 @@ func analyzeTaskTimeout(start, end, twoDayStart string) *TaskTimeoutReport {
 		),
 		PerfFailures:         len(perf),
 		SuiteBreakdown:       suiteBreakdownFrom(perf),
-		Platforms:            platforms,
+		TreeBreakdown:        treeBreakdownFrom(perf),
+		Platforms:            platformBreakdownFrom(perf),
 		TwoDayPerfFailures:   len(twoDayPerf),
 		TwoDaySuiteBreakdown: suiteBreakdownFrom(twoDayPerf),
+		TwoDayTreeBreakdown:  treeBreakdownFrom(twoDayPerf),
+		TwoDayPlatforms:      platformBreakdownFrom(twoDayPerf),
 	}
 }
 

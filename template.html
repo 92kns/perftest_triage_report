@@ -103,19 +103,34 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
       <ul class="details">
         <li><a href="{{.TaskTimeout.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
         <li><b>{{.TaskTimeout.PerfFailures}}</b> Failures ({{.DaysBack}}d){{if .TaskTimeout.TwoDayPerfFailures}} / <b>{{.TaskTimeout.TwoDayPerfFailures}}</b> (2d){{end}}</li>
-        {{if .TaskTimeout.TwoDaySuiteBreakdown}}
-          <li>Suite Breakdown (2d):
-            <ul class="subdetails">{{range .TaskTimeout.TwoDaySuiteBreakdown}}<li>{{.}}</li>{{end}}</ul>
-          </li>
-        {{end}}
         {{if .TaskTimeout.Platforms}}
-          <li>Platforms:
+          <li>Platforms ({{.DaysBack}}d):
             <ul class="subdetails">{{range .TaskTimeout.Platforms}}<li>{{.}}</li>{{end}}</ul>
           </li>
         {{end}}
+        {{if .TaskTimeout.TwoDayPlatforms}}
+          <li>Platforms (2d):
+            <ul class="subdetails">{{range .TaskTimeout.TwoDayPlatforms}}<li>{{.}}</li>{{end}}</ul>
+          </li>
+        {{end}}
+        {{if .TaskTimeout.TreeBreakdown}}
+          <li>Repository Breakdown ({{.DaysBack}}d):
+            <ul class="subdetails">{{range .TaskTimeout.TreeBreakdown}}<li>{{.}}</li>{{end}}</ul>
+          </li>
+        {{end}}
+        {{if .TaskTimeout.TwoDayTreeBreakdown}}
+          <li>Repository Breakdown (2d):
+            <ul class="subdetails">{{range .TaskTimeout.TwoDayTreeBreakdown}}<li>{{.}}</li>{{end}}</ul>
+          </li>
+        {{end}}
         {{if .TaskTimeout.SuiteBreakdown}}
-          <li>Suite Breakdown:
+          <li>Suite Breakdown ({{.DaysBack}}d):
             <ul class="subdetails">{{range .TaskTimeout.SuiteBreakdown}}<li>{{.}}</li>{{end}}</ul>
+          </li>
+        {{end}}
+        {{if .TaskTimeout.TwoDaySuiteBreakdown}}
+          <li>Suite Breakdown (2d):
+            <ul class="subdetails">{{range .TaskTimeout.TwoDaySuiteBreakdown}}<li>{{.}}</li>{{end}}</ul>
           </li>
         {{end}}
       </ul>
