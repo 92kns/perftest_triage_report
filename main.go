@@ -20,10 +20,13 @@ import (
 )
 
 const (
-	BugzillaURL   = "https://bugzilla.mozilla.org/rest/bug"
-	TreeherderURL = "https://treeherder.mozilla.org/api"
-	outputHTML    = "report.html"
+	BugzillaURL      = "https://bugzilla.mozilla.org/rest/bug"
+	TreeherderURL    = "https://treeherder.mozilla.org/api"
+	outputHTML       = "report.html"
+	taskTimeoutBugID = 1809667
 )
+
+var perfTestKeywords = []string{"browsertime", "talos", "perftest", "awsy"}
 
 var (
 	threshold int
@@ -90,6 +93,14 @@ type PermaBug struct {
 	BreakdownList   []string
 	TwoDayPlatforms []string
 	TwoDayBreakdown []string
+}
+
+type TaskTimeoutReport struct {
+	Link           string
+	GraphLink      string
+	PerfFailures   int
+	SuiteBreakdown []string
+	Platforms      []string
 }
 
 type ComponentGroup[T any] struct {
@@ -192,8 +203,9 @@ func main() {
 
 	var results []Result
 	var permas []PermaBug
+	var taskTimeout *TaskTimeoutReport
 	var wg2 sync.WaitGroup
-	wg2.Add(2)
+	wg2.Add(3)
 	go func() {
 		defer wg2.Done()
 		results = analyzeAll(interBugs, startDay, endDay, currentCounts, prevCounts, twoDayStart, twoDayCounts)
@@ -202,6 +214,10 @@ func main() {
 		defer wg2.Done()
 		permas = enrichPermas(rawPermas, startDay, endDay, twoDayStart, currentCounts, twoDayCounts)
 	}()
+	go func() {
+		defer wg2.Done()
+		taskTimeout = analyzeTaskTimeout(startDay, endDay)
+	}()
 	wg2.Wait()
 
 	if len(results) == 0 && len(permas) == 0 {
@@ -209,7 +225,7 @@ func main() {
 		return
 	}
 
-	writeHTMLReport(results, permas)
+	writeHTMLReport(results, permas, taskTimeout)
 	fmt.Println("✅ Report written to", outputHTML)
 	if !*noOpen {
 		openInBrowser(outputHTML)
@@ -604,21 +620,92 @@ func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, t
 	return results
 }
 
+// ===================== Task Timeout =====================
+
+func analyzeTaskTimeout(start, end string) *TaskTimeoutReport {
+	u := fmt.Sprintf("%s/failuresbybug/?startday=%s&endday=%s&tree=all&bug=%d", treeherderBase, start, end, taskTimeoutBugID)
+	resp, err := get(u)
+	if err != nil {
+		log.Printf("fetch task timeout breakdown: %v", err)
+		return nil
+	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("warning: error closing body: %v", err)
+		}
+	}()
+
+	var failures []THJobFailure
+	if err := json.NewDecoder(resp.Body).Decode(&failures); err != nil {
+		log.Printf("decode task timeout breakdown: %v", err)
+		return nil
+	}
+
+	var perf []THJobFailure
+	for _, f := range failures {
+		suite := strings.ToLower(f.TestSuite)
+		for _, kw := range perfTestKeywords {
+			if strings.Contains(suite, kw) {
+				perf = append(perf, f)
+				break
+			}
+		}
+	}
+
+	if len(perf) == 0 {
+		return nil
+	}
+
+	suiteCounts := map[string]int{}
+	platformCounts := map[string]int{}
+	for _, f := range perf {
+		suiteCounts[f.TestSuite]++
+		if p := normalizePlatform(f.Platform); p != "" {
+			platformCounts[p]++
+		}
+	}
+
+	var suiteBreakdown []string
+	for suite, count := range suiteCounts {
+		suiteBreakdown = append(suiteBreakdown, fmt.Sprintf("%s: %d", suite, count))
+	}
+	sort.Strings(suiteBreakdown)
+
+	var platforms []string
+	for p, count := range platformCounts {
+		platforms = append(platforms, fmt.Sprintf("%s: %d", p, count))
+	}
+	sort.Strings(platforms)
+
+	return &TaskTimeoutReport{
+		Link: fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", taskTimeoutBugID),
+		GraphLink: fmt.Sprintf(
+			"https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d",
+			start, end, taskTimeoutBugID,
+		),
+		PerfFailures:   len(perf),
+		SuiteBreakdown: suiteBreakdown,
+		Platforms:      platforms,
+	}
+}
+
 // ===================== HTML =====================
 
 type reportData struct {
 	Intermittents []ComponentGroup[Result]
 	Permas        []ComponentGroup[PermaBug]
+	TaskTimeout   *TaskTimeoutReport
 	Generated     string
 	DaysBack      int
 }
 
-func writeHTMLReport(results []Result, permas []PermaBug) {
+func writeHTMLReport(results []Result, permas []PermaBug, taskTimeout *TaskTimeoutReport) {
 	tmpl := reportTemplate
 
 	data := reportData{
 		Intermittents: groupByComponent(results, components),
 		Permas:        groupByComponent(permas, components),
+		TaskTimeout:   taskTimeout,
 		Generated:     time.Now().UTC().Format("2006-01-02 15:04 MST"),
 		DaysBack:      daysBack,
 	}

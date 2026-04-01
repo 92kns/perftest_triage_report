@@ -359,7 +359,7 @@ func TestRenderHTML(t *testing.T) {
 			Link: "https://bugzilla.mozilla.org/show_bug.cgi?id=5678", GraphLink: "https://treeherder.mozilla.org/"},
 	}
 
-	writeHTMLReport(results, permas)
+	writeHTMLReport(results, permas, nil)
 
 	// Use renderHTML directly with a buffer to verify output
 	var buf bytes.Buffer
@@ -431,6 +431,40 @@ func TestFetchPermaBugs(t *testing.T) {
 	}
 	if bugs[0].Component != "Raptor" {
 		t.Errorf("component: got %q, want Raptor", bugs[0].Component)
+	}
+}
+
+func TestAnalyzeTaskTimeout(t *testing.T) {
+	payload := []THJobFailure{
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "browsertime-tp6-firefox"},
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "browsertime-tp6-firefox"},
+		{Platform: "windows11-64-2009-shippable", Tree: "autoland", TestSuite: "talos-g5"},
+		{Platform: "macosx1470-64-shippable", Tree: "autoland", TestSuite: "some-unrelated-suite"},
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "awsy-base"},
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(payload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	old := treeherderBase
+	treeherderBase = server.URL
+	defer func() { treeherderBase = old }()
+
+	report := analyzeTaskTimeout("2026-03-12", "2026-03-19")
+
+	if report == nil {
+		t.Fatal("expected non-nil report")
+	}
+	// 4 perf failures (browsertime x2, talos x1, awsy x1); unrelated-suite excluded
+	if report.PerfFailures != 4 {
+		t.Errorf("PerfFailures: got %d, want 4", report.PerfFailures)
+	}
+	if report.Link == "" || report.GraphLink == "" {
+		t.Error("expected Link and GraphLink to be set")
 	}
 }
 
