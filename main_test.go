@@ -306,25 +306,12 @@ func TestFetchIntermittentBugs(t *testing.T) {
 func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 	maxConcurrent = 5
 	threshold = 20
-	// Treeherder counts server
-	bug1ID, bug2ID, bug3ID := 100, 200, 300
-	countsPayload := []THFailure{
-		{BugID: &bug1ID, BugCount: 50},  // above threshold
-		{BugID: &bug2ID, BugCount: 10},  // below threshold, should be excluded
-		{BugID: &bug3ID, BugCount: 100}, // above threshold, should sort first
-	}
 	breakdownPayload := []THJobFailure{
 		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "raptor-tp6"},
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		var err error
-		if r.URL.Path == "/failures/" {
-			err = json.NewEncoder(w).Encode(countsPayload)
-		} else {
-			err = json.NewEncoder(w).Encode(breakdownPayload)
-		}
-		if err != nil {
+		if err := json.NewEncoder(w).Encode(breakdownPayload); err != nil {
 			t.Errorf("failed to encode response: %v", err)
 		}
 	}))
@@ -340,8 +327,9 @@ func TestAnalyzeAllFiltersAndSorts(t *testing.T) {
 		{ID: 300, Summary: "Intermittent AWSY failure"},
 	}
 
+	counts := map[int]int{100: 50, 200: 10, 300: 100}
 	prevCounts := map[int]int{100: 30, 300: 60}
-	results := analyzeAll(bugs, "2026-03-12", "2026-03-19", prevCounts, "2026-03-17", map[int]int{}, map[int]int{})
+	results := analyzeAll(bugs, "2026-03-12", "2026-03-19", counts, prevCounts, "2026-03-17", map[int]int{}, map[int]int{})
 
 	if len(results) != 2 {
 		t.Fatalf("got %d results, want 2 (bug 200 below threshold)", len(results))
@@ -468,7 +456,7 @@ func TestEnrichPermas(t *testing.T) {
 		{ID: 11, Summary: "Perma talos regression", Component: "Talos"},
 	}
 
-	enriched := enrichPermas(permas, "2026-03-12", "2026-03-19", "2026-03-17")
+	enriched := enrichPermas(permas, "2026-03-12", "2026-03-19", "2026-03-17", map[int]int{10: 50, 11: 30}, map[int]int{10: 20, 11: 10})
 
 	for _, p := range enriched {
 		if len(p.BreakdownList) == 0 {

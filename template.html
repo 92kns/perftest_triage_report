@@ -62,13 +62,14 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
           <a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
           <ul class="details">
             <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
+            {{if .NumberFailures}}<li><b>{{.NumberFailures}}</b> Failures ({{$.DaysBack}}d){{if .TwoDayFailures}} / <b>{{.TwoDayFailures}}</b> (2d){{end}}</li>{{end}}
             {{if .Platforms}}
-              <li>Platforms ({{$.DaysBack}}d):
+              <li>Platforms:
                 <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
               </li>
             {{end}}
             {{if .BreakdownList}}
-              <li>Repository Breakdown ({{$.DaysBack}}d):
+              <li>Repository Breakdown:
                 <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
               </li>
             {{end}}

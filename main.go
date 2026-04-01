@@ -85,6 +85,8 @@ type PermaBug struct {
 	Assignee        string
 	GraphLink       string
 	Needinfo        string
+	NumberFailures  int
+	TwoDayFailures  int
 	Platforms       []string
 	BreakdownList   []string
 	TwoDayPlatforms []string
@@ -165,7 +167,7 @@ func main() {
 	// setup CLI flags for disabling the automatic HTML report opening in browser and allowing
 	// user to specify number of concurrent fetches
 	noOpen := flag.Bool("no-open", false, "Disable opening browser after generating report")
-	concurrency := flag.Int("concurrency", 5, "Maximum number of concurrent Treeherder breakdown fetches")
+	concurrency := flag.Int("concurrency", 10, "Maximum number of concurrent Treeherder breakdown fetches")
 	flag.IntVar(&threshold, "threshold", 20, "Minimum failure count to include a bug")
 	flag.IntVar(&daysBack, "days", 7, "Number of days back to query")
 	flag.Parse()
@@ -181,18 +183,30 @@ func main() {
 
 	var interBugs []Bug
 	var rawPermas []PermaBug
-	var prevCounts, twoDayCounts, prevTwoDayCounts map[int]int
+	var currentCounts, prevCounts, twoDayCounts, prevTwoDayCounts map[int]int
 	var wg sync.WaitGroup
-	wg.Add(5)
+	wg.Add(6)
 	go func() { defer wg.Done(); interBugs = fetchIntermittentBugs() }()
 	go func() { defer wg.Done(); rawPermas = fetchPermaBugs(startDay, endDay) }()
+	go func() { defer wg.Done(); currentCounts = fetchTreeherderCounts(startDay, endDay) }()
 	go func() { defer wg.Done(); prevCounts = fetchTreeherderCounts(prevStartDay, startDay) }()
 	go func() { defer wg.Done(); twoDayCounts = fetchTreeherderCounts(twoDayStart, endDay) }()
 	go func() { defer wg.Done(); prevTwoDayCounts = fetchTreeherderCounts(prevTwoDayStart, twoDayStart) }()
 	wg.Wait()
 
-	results := analyzeAll(interBugs, startDay, endDay, prevCounts, twoDayStart, twoDayCounts, prevTwoDayCounts)
-	permas := enrichPermas(rawPermas, startDay, endDay, twoDayStart)
+	var results []Result
+	var permas []PermaBug
+	var wg2 sync.WaitGroup
+	wg2.Add(2)
+	go func() {
+		defer wg2.Done()
+		results = analyzeAll(interBugs, startDay, endDay, currentCounts, prevCounts, twoDayStart, twoDayCounts, prevTwoDayCounts)
+	}()
+	go func() {
+		defer wg2.Done()
+		permas = enrichPermas(rawPermas, startDay, endDay, twoDayStart, currentCounts, twoDayCounts)
+	}()
+	wg2.Wait()
 
 	if len(results) == 0 && len(permas) == 0 {
 		fmt.Println("No matching bugs found.")
@@ -337,7 +351,7 @@ func fetchPermaBugs(start, end string) []PermaBug {
 	return permas
 }
 
-func enrichPermas(permas []PermaBug, start, end, twoDayStart string) []PermaBug {
+func enrichPermas(permas []PermaBug, start, end, twoDayStart string, counts, twoDayCounts map[int]int) []PermaBug {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	sema := make(chan struct{}, maxConcurrent)
@@ -353,6 +367,8 @@ func enrichPermas(permas []PermaBug, start, end, twoDayStart string) []PermaBug 
 			breakdowns, platforms := fetchTreeherderBreakdown(bug.ID, start, end)
 			twoDayBreakdowns, twoDayPlatforms := fetchTreeherderBreakdown(bug.ID, twoDayStart, end)
 			mu.Lock()
+			permas[idx].NumberFailures = counts[bug.ID]
+			permas[idx].TwoDayFailures = twoDayCounts[bug.ID]
 			permas[idx].BreakdownList = breakdowns
 			permas[idx].Platforms = platforms
 			permas[idx].TwoDayBreakdown = twoDayBreakdowns
@@ -511,12 +527,10 @@ func normalizePlatform(platform string) string {
 
 // ===================== Analyzer =====================
 
-func analyzeAll(bugs []Bug, start, end string, prevCounts map[int]int, twoDayStart string, twoDayCounts, prevTwoDayCounts map[int]int) []Result {
+func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, twoDayStart string, twoDayCounts, prevTwoDayCounts map[int]int) []Result {
 	if len(bugs) == 0 {
 		return nil
 	}
-
-	counts := fetchTreeherderCounts(start, end)
 
 	var qualifying []Bug
 	for _, b := range bugs {
