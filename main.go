@@ -61,21 +61,23 @@ type BugListResponse struct {
 }
 
 type Result struct {
-	ID             int
-	Link           string
-	NumberFailures int
-	Summary        string
-	Component      string
-	Age            string
-	Rate           string
-	Trend          string
-	TwoDay         int
-	TwoDayRate     string
-	Platforms      []string
-	BreakdownList  []string
-	Needinfo       string
-	GraphLink      string
-	Assignee       string
+	ID              int
+	Link            string
+	NumberFailures  int
+	Summary         string
+	Component       string
+	Age             string
+	Rate            string
+	Trend           string
+	TwoDay          int
+	TwoDayRate      string
+	TwoDayPlatforms []string
+	TwoDayBreakdown []string
+	Platforms       []string
+	BreakdownList   []string
+	Needinfo        string
+	GraphLink       string
+	Assignee        string
 }
 
 type PermaBug struct {
@@ -573,9 +575,11 @@ func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, t
 			rate := fetchFailureRate(b.ID, start, end)
 
 			twoDayCount := twoDayCounts[b.ID]
-			twoDayRate := ""
+			var twoDayRate string
+			var twoDayBreakdowns, twoDayPlatforms []string
 			if twoDayCount > 0 {
 				twoDayRate = fetchFailureRate(b.ID, twoDayStart, end)
+				twoDayBreakdowns, twoDayPlatforms = fetchTreeherderBreakdown(b.ID, twoDayStart, end)
 			}
 
 			ni := ""
@@ -598,21 +602,23 @@ func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, t
 
 			mu.Lock()
 			results = append(results, Result{
-				ID:             b.ID,
-				Link:           fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
-				NumberFailures: counts[b.ID],
-				Summary:        b.Summary,
-				Component:      b.Component,
-				Age:            bugAge(b.CreationTime),
-				Rate:           rate,
-				Trend:          computeTrend(counts[b.ID], prevCounts[b.ID]),
-				TwoDay:         twoDayCount,
-				TwoDayRate:     twoDayRate,
-				Platforms:      platforms,
-				BreakdownList:  breakdowns,
-				Needinfo:       ni,
-				GraphLink:      graphLink,
-				Assignee:       assigned,
+				ID:              b.ID,
+				Link:            fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", b.ID),
+				NumberFailures:  counts[b.ID],
+				Summary:         b.Summary,
+				Component:       b.Component,
+				Age:             bugAge(b.CreationTime),
+				Rate:            rate,
+				Trend:           computeTrend(counts[b.ID], prevCounts[b.ID]),
+				TwoDay:          twoDayCount,
+				TwoDayRate:      twoDayRate,
+				TwoDayPlatforms: twoDayPlatforms,
+				TwoDayBreakdown: twoDayBreakdowns,
+				Platforms:       platforms,
+				BreakdownList:   breakdowns,
+				Needinfo:        ni,
+				GraphLink:       graphLink,
+				Assignee:        assigned,
 			})
 			mu.Unlock()
 		}(bug)

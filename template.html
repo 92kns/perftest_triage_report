@@ -40,6 +40,16 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
           <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
         </li>
       {{end}}
+      {{if .TwoDayPlatforms}}
+        <li>Platforms (2d):
+          <ul class="subdetails">{{range .TwoDayPlatforms}}<li>{{.}}</li>{{end}}</ul>
+        </li>
+      {{end}}
+      {{if .TwoDayBreakdown}}
+        <li>Repository Breakdown (2d):
+          <ul class="subdetails">{{range .TwoDayBreakdown}}<li>{{.}}</li>{{end}}</ul>
+        </li>
+      {{end}}
       {{if .Age}}<li>Opened: {{.Age}} ago</li>{{end}}
       {{if .Assignee}}<li><b>Assigned To</b>: {{.Assignee}}</li>{{end}}
       {{if .Needinfo}}<li><b>NEEDINFO</b>: {{.Needinfo}}</li>{{end}}
