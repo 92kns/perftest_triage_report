@@ -468,7 +468,7 @@ func TestEnrichPermas(t *testing.T) {
 		{ID: 11, Summary: "Perma talos regression", Component: "Talos"},
 	}
 
-	enriched := enrichPermas(permas, "2026-03-12", "2026-03-19")
+	enriched := enrichPermas(permas, "2026-03-12", "2026-03-19", "2026-03-17")
 
 	for _, p := range enriched {
 		if len(p.BreakdownList) == 0 {

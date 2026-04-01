@@ -63,13 +63,23 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
           <ul class="details">
             <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
             {{if .Platforms}}
-              <li>Platforms:
+              <li>Platforms ({{$.DaysBack}}d):
                 <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
               </li>
             {{end}}
             {{if .BreakdownList}}
-              <li>Repository Breakdown:
+              <li>Repository Breakdown ({{$.DaysBack}}d):
                 <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
+              </li>
+            {{end}}
+            {{if .TwoDayPlatforms}}
+              <li>Platforms (2d):
+                <ul class="subdetails">{{range .TwoDayPlatforms}}<li>{{.}}</li>{{end}}</ul>
+              </li>
+            {{end}}
+            {{if .TwoDayBreakdown}}
+              <li>Repository Breakdown (2d):
+                <ul class="subdetails">{{range .TwoDayBreakdown}}<li>{{.}}</li>{{end}}</ul>
               </li>
             {{end}}
             {{if .Age}}<li>Opened: {{.Age}} ago</li>{{end}}

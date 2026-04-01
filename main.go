@@ -77,16 +77,18 @@ type Result struct {
 }
 
 type PermaBug struct {
-	ID            int
-	Link          string
-	Summary       string
-	Component     string
-	Age           string
-	Assignee      string
-	GraphLink     string
-	Needinfo      string
-	Platforms     []string
-	BreakdownList []string
+	ID              int
+	Link            string
+	Summary         string
+	Component       string
+	Age             string
+	Assignee        string
+	GraphLink       string
+	Needinfo        string
+	Platforms       []string
+	BreakdownList   []string
+	TwoDayPlatforms []string
+	TwoDayBreakdown []string
 }
 
 type ComponentGroup[T any] struct {
@@ -190,7 +192,7 @@ func main() {
 	wg.Wait()
 
 	results := analyzeAll(interBugs, startDay, endDay, prevCounts, twoDayStart, twoDayCounts, prevTwoDayCounts)
-	permas := enrichPermas(rawPermas, startDay, endDay)
+	permas := enrichPermas(rawPermas, startDay, endDay, twoDayStart)
 
 	if len(results) == 0 && len(permas) == 0 {
 		fmt.Println("No matching bugs found.")
@@ -335,7 +337,7 @@ func fetchPermaBugs(start, end string) []PermaBug {
 	return permas
 }
 
-func enrichPermas(permas []PermaBug, start, end string) []PermaBug {
+func enrichPermas(permas []PermaBug, start, end, twoDayStart string) []PermaBug {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	sema := make(chan struct{}, maxConcurrent)
@@ -349,9 +351,12 @@ func enrichPermas(permas []PermaBug, start, end string) []PermaBug {
 			defer func() { <-sema }()
 
 			breakdowns, platforms := fetchTreeherderBreakdown(bug.ID, start, end)
+			twoDayBreakdowns, twoDayPlatforms := fetchTreeherderBreakdown(bug.ID, twoDayStart, end)
 			mu.Lock()
 			permas[idx].BreakdownList = breakdowns
 			permas[idx].Platforms = platforms
+			permas[idx].TwoDayBreakdown = twoDayBreakdowns
+			permas[idx].TwoDayPlatforms = twoDayPlatforms
 			mu.Unlock()
 		}(i, p)
 	}
@@ -540,7 +545,13 @@ func analyzeAll(bugs []Bug, start, end string, prevCounts map[int]int, twoDaySta
 			twoDayRate, twoDayTrend := "", ""
 			if twoDayCount > 0 {
 				twoDayRate = fetchFailureRate(b.ID, twoDayStart, end)
-				twoDayTrend = computeTrend(twoDayCount, prevTwoDayCounts[b.ID])
+				prev := prevTwoDayCounts[b.ID]
+				delta := twoDayCount - prev
+				if delta > 0 {
+					twoDayTrend = fmt.Sprintf("↑ +%d", delta)
+				} else if delta < 0 {
+					twoDayTrend = fmt.Sprintf("↓ %d", delta)
+				}
 			}
 
 			ni := ""
