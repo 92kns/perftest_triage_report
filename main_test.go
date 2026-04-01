@@ -454,7 +454,7 @@ func TestAnalyzeTaskTimeout(t *testing.T) {
 	treeherderBase = server.URL
 	defer func() { treeherderBase = old }()
 
-	report := analyzeTaskTimeout("2026-03-12", "2026-03-19")
+	report := analyzeTaskTimeout("2026-03-12", "2026-03-19", "2026-03-17")
 
 	if report == nil {
 		t.Fatal("expected non-nil report")
@@ -462,6 +462,10 @@ func TestAnalyzeTaskTimeout(t *testing.T) {
 	// 4 perf failures (browsertime x2, talos x1, awsy x1); unrelated-suite excluded
 	if report.PerfFailures != 4 {
 		t.Errorf("PerfFailures: got %d, want 4", report.PerfFailures)
+	}
+	// 2d window hits same mock server, same payload → same 4 failures
+	if report.TwoDayPerfFailures != 4 {
+		t.Errorf("TwoDayPerfFailures: got %d, want 4", report.TwoDayPerfFailures)
 	}
 	if report.Link == "" || report.GraphLink == "" {
 		t.Error("expected Link and GraphLink to be set")

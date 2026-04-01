@@ -102,7 +102,12 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <li><a href="{{.TaskTimeout.Link}}" target="_blank">Bug {{printf "%d" 1809667}} - task-timeout (perf tests only)</a>
       <ul class="details">
         <li><a href="{{.TaskTimeout.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
-        <li><b>{{.TaskTimeout.PerfFailures}}</b> Failures ({{.DaysBack}}d)</li>
+        <li><b>{{.TaskTimeout.PerfFailures}}</b> Failures ({{.DaysBack}}d){{if .TaskTimeout.TwoDayPerfFailures}} / <b>{{.TaskTimeout.TwoDayPerfFailures}}</b> (2d){{end}}</li>
+        {{if .TaskTimeout.TwoDaySuiteBreakdown}}
+          <li>Suite Breakdown (2d):
+            <ul class="subdetails">{{range .TaskTimeout.TwoDaySuiteBreakdown}}<li>{{.}}</li>{{end}}</ul>
+          </li>
+        {{end}}
         {{if .TaskTimeout.Platforms}}
           <li>Platforms:
             <ul class="subdetails">{{range .TaskTimeout.Platforms}}<li>{{.}}</li>{{end}}</ul>

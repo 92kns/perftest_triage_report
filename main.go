@@ -96,11 +96,13 @@ type PermaBug struct {
 }
 
 type TaskTimeoutReport struct {
-	Link           string
-	GraphLink      string
-	PerfFailures   int
-	SuiteBreakdown []string
-	Platforms      []string
+	Link                 string
+	GraphLink            string
+	PerfFailures         int
+	SuiteBreakdown       []string
+	Platforms            []string
+	TwoDayPerfFailures   int
+	TwoDaySuiteBreakdown []string
 }
 
 type ComponentGroup[T any] struct {
@@ -216,7 +218,7 @@ func main() {
 	}()
 	go func() {
 		defer wg2.Done()
-		taskTimeout = analyzeTaskTimeout(startDay, endDay)
+		taskTimeout = analyzeTaskTimeout(startDay, endDay, twoDayStart)
 	}()
 	wg2.Wait()
 
@@ -622,25 +624,7 @@ func analyzeAll(bugs []Bug, start, end string, counts, prevCounts map[int]int, t
 
 // ===================== Task Timeout =====================
 
-func analyzeTaskTimeout(start, end string) *TaskTimeoutReport {
-	u := fmt.Sprintf("%s/failuresbybug/?startday=%s&endday=%s&tree=all&bug=%d", treeherderBase, start, end, taskTimeoutBugID)
-	resp, err := get(u)
-	if err != nil {
-		log.Printf("fetch task timeout breakdown: %v", err)
-		return nil
-	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			log.Printf("warning: error closing body: %v", err)
-		}
-	}()
-
-	var failures []THJobFailure
-	if err := json.NewDecoder(resp.Body).Decode(&failures); err != nil {
-		log.Printf("decode task timeout breakdown: %v", err)
-		return nil
-	}
-
+func filterPerfFailures(failures []THJobFailure) []THJobFailure {
 	var perf []THJobFailure
 	for _, f := range failures {
 		suite := strings.ToLower(f.TestSuite)
@@ -651,31 +635,62 @@ func analyzeTaskTimeout(start, end string) *TaskTimeoutReport {
 			}
 		}
 	}
+	return perf
+}
 
+func suiteBreakdownFrom(perf []THJobFailure) []string {
+	counts := map[string]int{}
+	for _, f := range perf {
+		counts[f.TestSuite]++
+	}
+	var out []string
+	for suite, count := range counts {
+		out = append(out, fmt.Sprintf("%s: %d", suite, count))
+	}
+	sort.Strings(out)
+	return out
+}
+
+func fetchRawBreakdown(bugID int, start, end string) []THJobFailure {
+	u := fmt.Sprintf("%s/failuresbybug/?startday=%s&endday=%s&tree=all&bug=%d", treeherderBase, start, end, bugID)
+	resp, err := get(u)
+	if err != nil {
+		log.Printf("fetch breakdown bug %d: %v", bugID, err)
+		return nil
+	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("warning: error closing body: %v", err)
+		}
+	}()
+	var failures []THJobFailure
+	if err := json.NewDecoder(resp.Body).Decode(&failures); err != nil {
+		log.Printf("decode breakdown bug %d: %v", bugID, err)
+		return nil
+	}
+	return failures
+}
+
+func analyzeTaskTimeout(start, end, twoDayStart string) *TaskTimeoutReport {
+	failures := fetchRawBreakdown(taskTimeoutBugID, start, end)
+	perf := filterPerfFailures(failures)
 	if len(perf) == 0 {
 		return nil
 	}
 
-	suiteCounts := map[string]int{}
 	platformCounts := map[string]int{}
 	for _, f := range perf {
-		suiteCounts[f.TestSuite]++
 		if p := normalizePlatform(f.Platform); p != "" {
 			platformCounts[p]++
 		}
 	}
-
-	var suiteBreakdown []string
-	for suite, count := range suiteCounts {
-		suiteBreakdown = append(suiteBreakdown, fmt.Sprintf("%s: %d", suite, count))
-	}
-	sort.Strings(suiteBreakdown)
-
 	var platforms []string
 	for p, count := range platformCounts {
 		platforms = append(platforms, fmt.Sprintf("%s: %d", p, count))
 	}
 	sort.Strings(platforms)
+
+	twoDayPerf := filterPerfFailures(fetchRawBreakdown(taskTimeoutBugID, twoDayStart, end))
 
 	return &TaskTimeoutReport{
 		Link: fmt.Sprintf("https://bugzilla.mozilla.org/show_bug.cgi?id=%d", taskTimeoutBugID),
@@ -683,9 +698,11 @@ func analyzeTaskTimeout(start, end string) *TaskTimeoutReport {
 			"https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=%s&endday=%s&tree=all&bug=%d",
 			start, end, taskTimeoutBugID,
 		),
-		PerfFailures:   len(perf),
-		SuiteBreakdown: suiteBreakdown,
-		Platforms:      platforms,
+		PerfFailures:         len(perf),
+		SuiteBreakdown:       suiteBreakdownFrom(perf),
+		Platforms:            platforms,
+		TwoDayPerfFailures:   len(twoDayPerf),
+		TwoDaySuiteBreakdown: suiteBreakdownFrom(twoDayPerf),
 	}
 }
 
