@@ -28,18 +28,18 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   <li><a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
     <ul class="details">
       <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>{{.NumberFailures}}</b> Failures ({{$.DaysBack}}d){{if .Rate}} ({{.Rate}} rate){{end}}{{if .Trend}} {{.Trend}}{{end}}</li>
-      {{if .TwoDay}}<li><b>{{.TwoDay}}</b> Failures (2d){{if .TwoDayRate}} ({{.TwoDayRate}} rate){{end}}</li>{{end}}
+      <li><b>{{$.DaysBack}}d window:</b> <b>{{.NumberFailures}}</b> failures{{if .Rate}} ({{.Rate}} rate){{end}}{{if .Trend}} {{.Trend}}{{end}}</li>
       {{if .Platforms}}
-        <li>Platforms:
+        <li>Platforms ({{$.DaysBack}}d):
           <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
         </li>
       {{end}}
       {{if .BreakdownList}}
-        <li>Repository Breakdown:
+        <li>Repository Breakdown ({{$.DaysBack}}d):
           <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
         </li>
       {{end}}
+      {{if .TwoDay}}<li><b>2d window:</b> <b>{{.TwoDay}}</b> failures{{if .TwoDayRate}} ({{.TwoDayRate}} rate){{end}}</li>{{end}}
       {{if .TwoDayPlatforms}}
         <li>Platforms (2d):
           <ul class="subdetails">{{range .TwoDayPlatforms}}<li>{{.}}</li>{{end}}</ul>
@@ -72,17 +72,18 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
           <a href="{{.Link}}" target="_blank">Bug {{.ID}} - {{.Summary}}</a>
           <ul class="details">
             <li><a href="{{.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
-            {{if .NumberFailures}}<li><b>{{.NumberFailures}}</b> Failures ({{$.DaysBack}}d){{if .TwoDayFailures}} / <b>{{.TwoDayFailures}}</b> (2d){{end}}</li>{{end}}
+            {{if .NumberFailures}}<li><b>{{$.DaysBack}}d window:</b> <b>{{.NumberFailures}}</b> failures</li>{{end}}
             {{if .Platforms}}
-              <li>Platforms:
+              <li>Platforms ({{$.DaysBack}}d):
                 <ul class="subdetails">{{range .Platforms}}<li>{{.}}</li>{{end}}</ul>
               </li>
             {{end}}
             {{if .BreakdownList}}
-              <li>Repository Breakdown:
+              <li>Repository Breakdown ({{$.DaysBack}}d):
                 <ul class="subdetails">{{range .BreakdownList}}<li>{{.}}</li>{{end}}</ul>
               </li>
             {{end}}
+            {{if .TwoDayFailures}}<li><b>2d window:</b> <b>{{.TwoDayFailures}}</b> failures</li>{{end}}
             {{if .TwoDayPlatforms}}
               <li>Platforms (2d):
                 <ul class="subdetails">{{range .TwoDayPlatforms}}<li>{{.}}</li>{{end}}</ul>
@@ -112,15 +113,10 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
     <li><a href="{{.TaskTimeout.Link}}" target="_blank">Bug {{printf "%d" 1809667}} - task-timeout (perf tests only)</a>
       <ul class="details">
         <li><a href="{{.TaskTimeout.GraphLink}}" target="_blank">Orange Factor Graph 📈</a></li>
-        <li><b>{{.TaskTimeout.PerfFailures}}</b> Failures ({{.DaysBack}}d){{if .TaskTimeout.TwoDayPerfFailures}} / <b>{{.TaskTimeout.TwoDayPerfFailures}}</b> (2d){{end}}</li>
+        <li><b>{{.DaysBack}}d window:</b> <b>{{.TaskTimeout.PerfFailures}}</b> failures</li>
         {{if .TaskTimeout.Platforms}}
           <li>Platforms ({{.DaysBack}}d):
             <ul class="subdetails">{{range .TaskTimeout.Platforms}}<li>{{.}}</li>{{end}}</ul>
-          </li>
-        {{end}}
-        {{if .TaskTimeout.TwoDayPlatforms}}
-          <li>Platforms (2d):
-            <ul class="subdetails">{{range .TaskTimeout.TwoDayPlatforms}}<li>{{.}}</li>{{end}}</ul>
           </li>
         {{end}}
         {{if .TaskTimeout.TreeBreakdown}}
@@ -128,14 +124,20 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
             <ul class="subdetails">{{range .TaskTimeout.TreeBreakdown}}<li>{{.}}</li>{{end}}</ul>
           </li>
         {{end}}
-        {{if .TaskTimeout.TwoDayTreeBreakdown}}
-          <li>Repository Breakdown (2d):
-            <ul class="subdetails">{{range .TaskTimeout.TwoDayTreeBreakdown}}<li>{{.}}</li>{{end}}</ul>
-          </li>
-        {{end}}
         {{if .TaskTimeout.SuiteBreakdown}}
           <li>Suite Breakdown ({{.DaysBack}}d):
             <ul class="subdetails">{{range .TaskTimeout.SuiteBreakdown}}<li>{{.}}</li>{{end}}</ul>
+          </li>
+        {{end}}
+        {{if .TaskTimeout.TwoDayPerfFailures}}<li><b>2d window:</b> <b>{{.TaskTimeout.TwoDayPerfFailures}}</b> failures</li>{{end}}
+        {{if .TaskTimeout.TwoDayPlatforms}}
+          <li>Platforms (2d):
+            <ul class="subdetails">{{range .TaskTimeout.TwoDayPlatforms}}<li>{{.}}</li>{{end}}</ul>
+          </li>
+        {{end}}
+        {{if .TaskTimeout.TwoDayTreeBreakdown}}
+          <li>Repository Breakdown (2d):
+            <ul class="subdetails">{{range .TaskTimeout.TwoDayTreeBreakdown}}<li>{{.}}</li>{{end}}</ul>
           </li>
         {{end}}
         {{if .TaskTimeout.TwoDaySuiteBreakdown}}
