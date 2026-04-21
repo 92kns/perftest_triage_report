@@ -14,7 +14,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </head><body>
 
 <p style="font-size: 0.9em; color: #666; user-select: none;">
-  Last updated: 2026-04-20 10:26 UTC |
+  Last updated: 2026-04-21 10:10 UTC |
 <a href="https://github.com/92kns/perftest_triage_report/issues" target="_blank" style="font-size: 0.9em;">
   🐞 File an issue on GitHub
 </a>
@@ -22,37 +22,75 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 <h2>🟧 Intermittent Failures</h2>
 
 <div class="component-group">
+  <h3>mozperftest</h3>
+  <ul class="buglist">
+  
+  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2029501" target="_blank">Bug 2029501 - Intermittent [tier 2] Exception: Difference in Images is too high, suspected faulty run</a>
+    <ul class="details">
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=2029501" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>21</b> failures (0.3% rate) ↑ &#43;7</li>
+      
+        <li>Platforms (7d):
+          <ul class="subdetails"><li>android-hw-a55: 21</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (7d):
+          <ul class="subdetails"><li>autoland: 19</li><li>mozilla-central: 2</li></ul>
+        </li>
+      
+      <li><b>2d window:</b> <b>8</b> failures (0.5% rate)</li>
+      
+        <li>Platforms (2d):
+          <ul class="subdetails"><li>android-hw-a55: 8</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (2d):
+          <ul class="subdetails"><li>autoland: 7</li><li>mozilla-central: 1</li></ul>
+        </li>
+      
+      <li>Opened: 15 days ago</li>
+      
+      
+    </ul>
+  </li>
+  
+  </ul>
+</div>
+
+<div class="component-group">
   <h3>Performance</h3>
   <ul class="buglist">
   
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2028315" target="_blank">Bug 2028315 - High frequency [tier 2] Cannot find Google Chrome at C:\Progra~2\Google\Chrome\Application\chrome.exe</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=2028315" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>26</b> failures (0.4% rate) ↓ -13</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=2028315" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>28</b> failures (0.4% rate) ↓ -4</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>windows11: 26</li></ul>
+          <ul class="subdetails"><li>windows11: 28</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>mozilla-central: 26</li></ul>
+          <ul class="subdetails"><li>mozilla-central: 28</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>1</b> failures (0.1% rate)</li>
+      <li><b>2d window:</b> <b>10</b> failures (0.6% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>windows11: 1</li></ul>
+          <ul class="subdetails"><li>windows11: 10</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>mozilla-central: 1</li></ul>
+          <ul class="subdetails"><li>mozilla-central: 10</li></ul>
         </li>
       
-      <li>Opened: 19 days ago</li>
+      <li>Opened: 20 days ago</li>
       
-      <li><b>NEEDINFO</b>: mcornmesser@mozilla.com</li>
+      
     </ul>
   </li>
   
@@ -65,30 +103,30 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1985198" target="_blank">Bug 1985198 - Intermittent raptor-browsertime Info: TypeError: Cannot read properties of null (reading &#39;transfer&#39;)</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1985198" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>319</b> failures (4.4% rate) ↑ &#43;73</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=1985198" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>341</b> failures (4.6% rate) ↑ &#43;68</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 319</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 341</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 195</li><li>mozilla-central: 124</li></ul>
+          <ul class="subdetails"><li>autoland: 205</li><li>mozilla-central: 136</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>107</b> failures (15.5% rate)</li>
+      <li><b>2d window:</b> <b>140</b> failures (8.1% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 107</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 140</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 57</li><li>mozilla-central: 50</li></ul>
+          <ul class="subdetails"><li>autoland: 71</li><li>mozilla-central: 69</li></ul>
         </li>
       
-      <li>Opened: 237 days ago</li>
+      <li>Opened: 238 days ago</li>
       
       <li><b>NEEDINFO</b>: aerickson@mozilla.com</li>
     </ul>
@@ -96,61 +134,30 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1794985" target="_blank">Bug 1794985 - Intermittent raptor-browsertime Critical: Browsertime process timed out after waiting 240 seconds for output</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1794985" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>160</b> failures (2.2% rate) ↑ &#43;29</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=1794985" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>178</b> failures (2.4% rate) ↑ &#43;22</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 160</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 178</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 93</li><li>mozilla-central: 67</li></ul>
+          <ul class="subdetails"><li>autoland: 105</li><li>mozilla-central: 73</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>17</b> failures (2.5% rate)</li>
+      <li><b>2d window:</b> <b>45</b> failures (2.6% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 17</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 45</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 6</li><li>mozilla-central: 11</li></ul>
+          <ul class="subdetails"><li>autoland: 20</li><li>mozilla-central: 25</li></ul>
         </li>
       
-      <li>Opened: 1285 days ago</li>
-      
-      
-    </ul>
-  </li>
-  
-  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1795826" target="_blank">Bug 1795826 - Intermittent raptor-browsertime Error: Browsertime failed to run</a>
-    <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1795826" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>88</b> failures (1.2% rate) ↑ &#43;37</li>
-      
-        <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 50</li><li>android-hw-p6: 14</li><li>linux2404: 9</li><li>macosx1470: 8</li><li>macosx1500: 1</li><li>windows11: 6</li></ul>
-        </li>
-      
-      
-        <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 52</li><li>mozilla-beta: 1</li><li>mozilla-central: 34</li><li>try: 1</li></ul>
-        </li>
-      
-      <li><b>2d window:</b> <b>40</b> failures (5.8% rate)</li>
-      
-        <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 34</li><li>android-hw-p6: 3</li><li>linux2404: 1</li><li>macosx1470: 1</li><li>macosx1500: 1</li></ul>
-        </li>
-      
-      
-        <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 23</li><li>mozilla-beta: 1</li><li>mozilla-central: 16</li></ul>
-        </li>
-      
-      <li>Opened: 1280 days ago</li>
+      <li>Opened: 1286 days ago</li>
       
       
     </ul>
@@ -158,30 +165,61 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1934169" target="_blank">Bug 1934169 - Intermittent raptor-browsertime Critical: TypeError: Cannot read properties of undefined (reading &#39;samples&#39;) [0m | single tracking bug</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1934169" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>78</b> failures (1.1% rate) ↓ -47</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=1934169" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>175</b> failures (2.4% rate) ↑ &#43;67</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 78</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 173</li><li>macosx1470: 1</li><li>windows11: 1</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 42</li><li>mozilla-central: 36</li></ul>
+          <ul class="subdetails"><li>autoland: 89</li><li>mozilla-central: 86</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>59</b> failures (8.6% rate)</li>
+      <li><b>2d window:</b> <b>137</b> failures (7.9% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 59</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 135</li><li>macosx1470: 1</li><li>windows11: 1</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 29</li><li>mozilla-central: 30</li></ul>
+          <ul class="subdetails"><li>autoland: 64</li><li>mozilla-central: 73</li></ul>
         </li>
       
-      <li>Opened: 507 days ago</li>
+      <li>Opened: 508 days ago</li>
+      
+      
+    </ul>
+  </li>
+  
+  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1795826" target="_blank">Bug 1795826 - Intermittent raptor-browsertime Error: Browsertime failed to run</a>
+    <ul class="details">
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=1795826" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>104</b> failures (1.4% rate) ↑ &#43;45</li>
+      
+        <li>Platforms (7d):
+          <ul class="subdetails"><li>android-hw-a55: 67</li><li>android-hw-p6: 13</li><li>linux2404: 9</li><li>macosx1470: 8</li><li>macosx1500: 1</li><li>windows11: 6</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (7d):
+          <ul class="subdetails"><li>autoland: 62</li><li>mozilla-beta: 1</li><li>mozilla-central: 40</li><li>try: 1</li></ul>
+        </li>
+      
+      <li><b>2d window:</b> <b>33</b> failures (1.9% rate)</li>
+      
+        <li>Platforms (2d):
+          <ul class="subdetails"><li>android-hw-a55: 30</li><li>android-hw-p6: 2</li><li>linux2404: 1</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (2d):
+          <ul class="subdetails"><li>autoland: 19</li><li>mozilla-central: 14</li></ul>
+        </li>
+      
+      <li>Opened: 1281 days ago</li>
       
       
     </ul>
@@ -189,92 +227,61 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1682027" target="_blank">Bug 1682027 - High frequency |  results.MissingResultsError: Browsertime cycle missing [&#39;paintTiming&#39;, &#39;first-contentful-paint&#39;] measurement / Browsertime cycle missing [&#39;largestContentfulPaint&#39;, &#39;renderTime&#39;] measurement</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1682027" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>45</b> failures (0.6% rate) ↓ -4</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=1682027" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>50</b> failures (0.7% rate)</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 22</li><li>windows11: 23</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 27</li><li>windows11: 23</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 25</li><li>mozilla-beta: 1</li><li>mozilla-central: 18</li><li>mozilla-release: 1</li></ul>
+          <ul class="subdetails"><li>autoland: 26</li><li>mozilla-beta: 1</li><li>mozilla-central: 22</li><li>mozilla-release: 1</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>13</b> failures (1.9% rate)</li>
+      <li><b>2d window:</b> <b>18</b> failures (1.0% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 7</li><li>windows11: 6</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 11</li><li>windows11: 7</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 5</li><li>mozilla-central: 8</li></ul>
+          <ul class="subdetails"><li>autoland: 7</li><li>mozilla-central: 11</li></ul>
         </li>
       
-      <li>Opened: 1955 days ago</li>
+      <li>Opened: 1956 days ago</li>
       
       <li><b>NEEDINFO</b>: afinder@mozilla.com</li>
     </ul>
   </li>
   
-  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1873581" target="_blank">Bug 1873581 - Intermittent raptor-browsertime Critical: Failed waiting on page https://&lt;URL&gt;/ to finished loading, timed out after 120000 ms Error: Running page complete check</a>
-    <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1873581" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>24</b> failures (0.3% rate) ↑ &#43;8</li>
-      
-        <li>Platforms (7d):
-          <ul class="subdetails"><li>linux2404: 1</li><li>macosx1470: 21</li><li>windows11: 2</li></ul>
-        </li>
-      
-      
-        <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 16</li><li>mozilla-central: 8</li></ul>
-        </li>
-      
-      <li><b>2d window:</b> <b>4</b> failures (0.6% rate)</li>
-      
-        <li>Platforms (2d):
-          <ul class="subdetails"><li>macosx1470: 4</li></ul>
-        </li>
-      
-      
-        <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 3</li><li>mozilla-central: 1</li></ul>
-        </li>
-      
-      <li>Opened: 832 days ago</li>
-      
-      
-    </ul>
-  </li>
-  
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1680214" target="_blank">Bug 1680214 - Intermittent raptor-main Critical: TEST-UNEXPECTED-FAIL: no raptor test results were found for &lt;random&gt; | single tracking bug</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1680214" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>22</b> failures (0.3% rate) ↓ -21</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=1680214" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>20</b> failures (0.3% rate) ↓ -16</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 1</li><li>linux1804: 1</li><li>linux2404: 16</li><li>windows11: 4</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 1</li><li>linux1804: 1</li><li>linux2404: 13</li><li>windows11: 5</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 17</li><li>mozilla-beta: 2</li><li>mozilla-central: 3</li></ul>
+          <ul class="subdetails"><li>autoland: 16</li><li>mozilla-beta: 2</li><li>mozilla-central: 2</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>6</b> failures (0.9% rate)</li>
+      <li><b>2d window:</b> <b>5</b> failures (0.3% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 1</li><li>linux2404: 4</li><li>windows11: 1</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 1</li><li>linux2404: 3</li><li>windows11: 1</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 5</li><li>mozilla-central: 1</li></ul>
+          <ul class="subdetails"><li>autoland: 4</li><li>mozilla-central: 1</li></ul>
         </li>
       
-      <li>Opened: 1965 days ago</li>
+      <li>Opened: 1966 days ago</li>
       
       
     </ul>
@@ -285,42 +292,6 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 
 
 
-  <div class="section">
-    <h2>🟥 Perma Failures</h2>
-    
-    <div class="component-group">
-      <h3>Raptor</h3>
-      <ul class="buglist">
-        
-        <li>
-          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1949085" target="_blank">Bug 1949085 - Perma [Tier 2] raptor-main Critical: TEST-UNEXPECTED-FAIL: no raptor test results were found for twitch-animation</a>
-          <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1949085" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>1</b> failures</li>
-            
-              <li>Platforms (7d):
-                <ul class="subdetails"><li>linux1804: 1</li></ul>
-              </li>
-            
-            
-              <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>mozilla-beta: 1</li></ul>
-              </li>
-            
-            
-            
-            
-            <li>Opened: 425 days ago</li>
-            
-            
-          </ul>
-        </li>
-        
-      </ul>
-    </div>
-    
-  </div>
-
 
 
 <div class="section">
@@ -328,37 +299,37 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   <ul class="buglist">
     <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1809667" target="_blank">Bug 1809667 - task-timeout (perf tests only)</a>
       <ul class="details">
-        <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-13&amp;endday=2026-04-20&amp;tree=all&amp;bug=1809667" target="_blank">Orange Factor Graph 📈</a></li>
-        <li><b>7d window:</b> <b>133</b> failures</li>
+        <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-04-14&amp;endday=2026-04-21&amp;tree=all&amp;bug=1809667" target="_blank">Orange Factor Graph 📈</a></li>
+        <li><b>7d window:</b> <b>132</b> failures</li>
         
           <li>Platforms (7d):
-            <ul class="subdetails"><li>android-hw-a55: 2</li><li>linux2404: 39</li><li>macosx1470: 41</li><li>windows11: 51</li></ul>
+            <ul class="subdetails"><li>android-hw-a55: 2</li><li>linux2404: 40</li><li>macosx1470: 40</li><li>windows11: 50</li></ul>
           </li>
         
         
           <li>Repository Breakdown (7d):
-            <ul class="subdetails"><li>autoland: 99</li><li>mozilla-central: 34</li></ul>
+            <ul class="subdetails"><li>autoland: 99</li><li>mozilla-central: 33</li></ul>
           </li>
         
         
           <li>Suite Breakdown (7d):
-            <ul class="subdetails"><li>browsertime-benchmark-chrome-stylebench: 1</li><li>browsertime-benchmark-firefox-ares6: 2</li><li>browsertime-benchmark-firefox-speedometer3: 8</li><li>browsertime-benchmark-wasm-firefox-wasm-misc-imizing: 1</li><li>browsertime-tp6m-essential-fenix-amazon-search-nofis: 1</li><li>browsertime-tp6m-fenix-dailymail-nofis: 1</li><li>browsertime-upload-firefox-upload-h3: 57</li><li>browsertime-upload-firefox-upload: 55</li><li>browsertime-webcodecs-firefox-ve-h264-rt: 1</li><li>browsertime-webcodecs-firefox-ve-vp9-q: 1</li><li>talos-g1: 1</li><li>talos-pdfpaint-8: 4</li></ul>
+            <ul class="subdetails"><li>browsertime-benchmark-firefox-ares6: 2</li><li>browsertime-benchmark-firefox-speedometer3: 8</li><li>browsertime-benchmark-wasm-firefox-wasm-misc-imizing: 1</li><li>browsertime-tp6m-essential-fenix-amazon-search-nofis: 1</li><li>browsertime-tp6m-fenix-dailymail-nofis: 1</li><li>browsertime-upload-firefox-upload-h3: 57</li><li>browsertime-upload-firefox-upload: 55</li><li>talos-g1: 1</li><li>talos-pdfpaint-2: 1</li><li>talos-pdfpaint-8: 5</li></ul>
           </li>
         
         <li><b>2d window:</b> <b>3</b> failures</li>
         
           <li>Platforms (2d):
-            <ul class="subdetails"><li>windows11: 3</li></ul>
+            <ul class="subdetails"><li>linux2404: 1</li><li>windows11: 2</li></ul>
           </li>
         
         
           <li>Repository Breakdown (2d):
-            <ul class="subdetails"><li>autoland: 1</li><li>mozilla-central: 2</li></ul>
+            <ul class="subdetails"><li>autoland: 2</li><li>mozilla-central: 1</li></ul>
           </li>
         
         
           <li>Suite Breakdown (2d):
-            <ul class="subdetails"><li>talos-pdfpaint-8: 3</li></ul>
+            <ul class="subdetails"><li>talos-pdfpaint-2: 1</li><li>talos-pdfpaint-8: 2</li></ul>
           </li>
         
       </ul>
