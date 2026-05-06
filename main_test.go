@@ -435,6 +435,10 @@ func TestFetchPermaBugs(t *testing.T) {
 }
 
 func TestAnalyzeTaskTimeout(t *testing.T) {
+	oldThreshold := threshold
+	threshold = 4
+	t.Cleanup(func() { threshold = oldThreshold })
+
 	payload := []THJobFailure{
 		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "browsertime-tp6-firefox"},
 		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "browsertime-tp6-firefox"},
@@ -469,6 +473,41 @@ func TestAnalyzeTaskTimeout(t *testing.T) {
 	}
 	if report.Link == "" || report.GraphLink == "" {
 		t.Error("expected Link and GraphLink to be set")
+	}
+}
+
+func TestAnalyzeTaskTimeoutBelowThreshold(t *testing.T) {
+	oldThreshold := threshold
+	threshold = 5
+	t.Cleanup(func() { threshold = oldThreshold })
+
+	payload := []THJobFailure{
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "browsertime-tp6-firefox"},
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "browsertime-tp6-firefox"},
+		{Platform: "windows11-64-2009-shippable", Tree: "autoland", TestSuite: "talos-g5"},
+		{Platform: "linux1804-64-shippable-qr", Tree: "autoland", TestSuite: "awsy-base"},
+	}
+	var requests atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(payload); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	old := treeherderBase
+	treeherderBase = server.URL
+	defer func() { treeherderBase = old }()
+
+	report := analyzeTaskTimeout("2026-03-12", "2026-03-19", "2026-03-17")
+
+	if report != nil {
+		t.Fatal("expected nil report when perf failures are below threshold")
+	}
+	if requests.Load() != 1 {
+		t.Errorf("expected only primary-window fetch below threshold, got %d requests", requests.Load())
 	}
 }
 

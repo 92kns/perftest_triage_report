@@ -710,7 +710,7 @@ func fetchRawBreakdown(bugID int, start, end string) []THJobFailure {
 
 func analyzeTaskTimeout(start, end, twoDayStart string) *TaskTimeoutReport {
 	perf := filterPerfFailures(fetchRawBreakdown(taskTimeoutBugID, start, end))
-	if len(perf) == 0 {
+	if len(perf) < threshold {
 		return nil
 	}
 	twoDayPerf := filterPerfFailures(fetchRawBreakdown(taskTimeoutBugID, twoDayStart, end))

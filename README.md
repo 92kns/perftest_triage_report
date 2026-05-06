@@ -10,7 +10,7 @@ Useful for perftest triage sessions where engineers need a concise and accurate 
 
 - 🟧 **Intermittent Failures** — open bugs with `intermittent-failure` keyword, filtered to those meeting the failure threshold
 - 🟥 **Perma Failures** — open bugs with "Perma" in the title, active in the report window
-- 🔶 **Generic Task Timeout** — perf-test failures (browsertime, talos, perftest, awsy) from [Bug 1809667](https://bugzilla.mozilla.org/show_bug.cgi?id=1809667), always reported separately
+- 🔶 **Generic Task Timeout** — perf-test failures (browsertime, talos, perftest, awsy) from [Bug 1809667](https://bugzilla.mozilla.org/show_bug.cgi?id=1809667), reported separately when they meet the failure threshold
 
 All sections are grouped by component: AWSY, Condprofile, mozperftest, Performance, Raptor, Talos.
 
