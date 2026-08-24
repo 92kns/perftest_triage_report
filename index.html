@@ -14,7 +14,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </head><body>
 
 <p style="font-size: 0.9em; color: #666; user-select: none;">
-  Last updated: 2026-08-23 09:16 UTC |
+  Last updated: 2026-08-24 09:35 UTC |
 <a href="https://github.com/92kns/perftest_triage_report/issues" target="_blank" style="font-size: 0.9em;">
   🐞 File an issue on GitHub
 </a>
@@ -27,22 +27,22 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2038441" target="_blank">Bug 2038441 - High frequency [tier 2] Android perftest [taskcluster:error] Aborting task... | single tracking bug</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-16&amp;endday=2026-08-23&amp;tree=all&amp;bug=2038441" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>79</b> failures (1.0% rate) ↓ -188</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-17&amp;endday=2026-08-24&amp;tree=all&amp;bug=2038441" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>59</b> failures (0.7% rate) ↓ -196</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 24</li><li>android-hw-p6: 25</li><li>android-hw-s24: 28</li><li>linux2404: 1</li><li>windows11: 1</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 16</li><li>android-hw-p6: 19</li><li>android-hw-s24: 23</li><li>windows11: 1</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 14</li><li>mozilla-central: 65</li></ul>
+          <ul class="subdetails"><li>autoland: 11</li><li>mozilla-central: 48</li></ul>
         </li>
       
       
       
       
-      <li>Opened: 105 days ago</li>
+      <li>Opened: 106 days ago</li>
       
       
     </ul>
@@ -50,30 +50,68 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2056657" target="_blank">Bug 2056657 - Frequent mozperftest.metrics.exceptions.MetricsMissingResultsError: Could not find any results to process.</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-16&amp;endday=2026-08-23&amp;tree=all&amp;bug=2056657" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>55</b> failures (0.7% rate) ↑ &#43;8</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-17&amp;endday=2026-08-24&amp;tree=all&amp;bug=2056657" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>55</b> failures (0.7% rate) ↑ &#43;12</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 14</li><li>android-hw-p6: 18</li><li>android-hw-s24: 23</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 14</li><li>android-hw-p6: 17</li><li>android-hw-s24: 24</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 14</li><li>mozilla-central: 41</li></ul>
+          <ul class="subdetails"><li>autoland: 12</li><li>mozilla-central: 43</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>30</b> failures (1.4% rate)</li>
+      <li><b>2d window:</b> <b>20</b> failures (1.7% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 4</li><li>android-hw-p6: 11</li><li>android-hw-s24: 15</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 4</li><li>android-hw-p6: 6</li><li>android-hw-s24: 10</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 4</li><li>mozilla-central: 26</li></ul>
+          <ul class="subdetails"><li>autoland: 2</li><li>mozilla-central: 18</li></ul>
         </li>
       
-      <li>Opened: 32 days ago</li>
+      <li>Opened: 33 days ago</li>
+      
+      
+    </ul>
+  </li>
+  
+  </ul>
+</div>
+
+<div class="component-group">
+  <h3>Raptor</h3>
+  <ul class="buglist">
+  
+  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1921101" target="_blank">Bug 1921101 - Frequent perftest-support-class Critical: TEST-UNEXPECTED-FAIL | Some visual metrics have an erroneous value of 0.</a>
+    <ul class="details">
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-17&amp;endday=2026-08-24&amp;tree=all&amp;bug=1921101" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>21</b> failures (0.3% rate) ↑ &#43;14</li>
+      
+        <li>Platforms (7d):
+          <ul class="subdetails"><li>android-hw-a55: 21</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (7d):
+          <ul class="subdetails"><li>autoland: 19</li><li>mozilla-central: 2</li></ul>
+        </li>
+      
+      <li><b>2d window:</b> <b>17</b> failures (1.5% rate)</li>
+      
+        <li>Platforms (2d):
+          <ul class="subdetails"><li>android-hw-a55: 17</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (2d):
+          <ul class="subdetails"><li>autoland: 17</li></ul>
+        </li>
+      
+      <li>Opened: 697 days ago</li>
       
       
     </ul>
@@ -94,30 +132,30 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <li>
           <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2064284" target="_blank">Bug 2064284 - Perma custom-car [taskcluster:error] Uploading error artifact public/build from file public/build with message &#34;Could not read directory | build failed on toolchain/win:win_clang_x64</a>
           <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-16&amp;endday=2026-08-23&amp;tree=all&amp;bug=2064284" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>14</b> failures</li>
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-17&amp;endday=2026-08-24&amp;tree=all&amp;bug=2064284" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><b>7d window:</b> <b>15</b> failures</li>
             
               <li>Platforms (7d):
-                <ul class="subdetails"><li>macos: 4</li><li>windows11: 1</li><li>windows: 9</li></ul>
+                <ul class="subdetails"><li>macos: 5</li><li>windows11: 1</li><li>windows: 9</li></ul>
               </li>
             
             
               <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>autoland: 1</li><li>mozilla-central: 13</li></ul>
+                <ul class="subdetails"><li>autoland: 1</li><li>mozilla-central: 14</li></ul>
               </li>
             
-            <li><b>2d window:</b> <b>4</b> failures</li>
+            <li><b>2d window:</b> <b>3</b> failures</li>
             
               <li>Platforms (2d):
-                <ul class="subdetails"><li>macos: 2</li><li>windows: 2</li></ul>
+                <ul class="subdetails"><li>macos: 2</li><li>windows: 1</li></ul>
               </li>
             
             
               <li>Repository Breakdown (2d):
-                <ul class="subdetails"><li>mozilla-central: 4</li></ul>
+                <ul class="subdetails"><li>mozilla-central: 3</li></ul>
               </li>
             
-            <li>Opened: 5 days ago</li>
+            <li>Opened: 6 days ago</li>
             <li><b>Assigned To</b>: aglavic@mozilla.com</li>
             
           </ul>
@@ -135,37 +173,37 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   <ul class="buglist">
     <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1809667" target="_blank">Bug 1809667 - task-timeout (perf tests only)</a>
       <ul class="details">
-        <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-16&amp;endday=2026-08-23&amp;tree=all&amp;bug=1809667" target="_blank">Orange Factor Graph 📈</a></li>
-        <li><b>7d window:</b> <b>27</b> failures</li>
+        <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-08-17&amp;endday=2026-08-24&amp;tree=all&amp;bug=1809667" target="_blank">Orange Factor Graph 📈</a></li>
+        <li><b>7d window:</b> <b>24</b> failures</li>
         
           <li>Platforms (7d):
-            <ul class="subdetails"><li>android-hw-a55: 2</li><li>android-hw-p6: 7</li><li>linux1804: 1</li><li>linux2404: 1</li><li>macosx1470: 9</li><li>windows11: 7</li></ul>
+            <ul class="subdetails"><li>android-hw-a55: 2</li><li>android-hw-p6: 7</li><li>linux1804: 1</li><li>macosx1470: 9</li><li>windows11: 5</li></ul>
           </li>
         
         
           <li>Repository Breakdown (7d):
-            <ul class="subdetails"><li>autoland: 15</li><li>mozilla-central: 12</li></ul>
+            <ul class="subdetails"><li>autoland: 13</li><li>mozilla-central: 11</li></ul>
           </li>
         
         
           <li>Suite Breakdown (7d):
-            <ul class="subdetails"><li>browsertime-benchmark-firefox-unity-webgl: 1</li><li>browsertime-benchmark-speedometer3-mobile-fenix-nofis: 4</li><li>browsertime-benchmark-speedometer3-mobile-fenix: 2</li><li>browsertime-benchmark-wasm-firefox-wasm-misc: 1</li><li>browsertime-upload-firefox-upload: 1</li><li>browsertime-video-playback-latency-mobile-fenix-vpl-h264: 1</li><li>browsertime-video-playback-latency-mobile-fenix-vpl-vp9: 1</li><li>perftest-android-hw-p6-aarch64-shippable-startup-chrome-m-newssite-applink-startup: 1</li><li>perftest-linux-ml-summarizer-perf-linux1804-64-shippable: 1</li><li>perftest-windows11-24h2-ml-llama-smollm2-smoke: 1</li><li>talos-chrome-no-nv: 1</li><li>talos-g4-swr: 1</li><li>talos-other-no-nv: 3</li><li>talos-other-swr: 1</li><li>talos-pdfpaint-3-swr: 1</li><li>talos-realworld-webextensions: 1</li><li>talos-svgr-swr: 1</li><li>talos-svgr: 1</li><li>talos-webgl-swr: 1</li><li>talos-webgl: 2</li></ul>
+            <ul class="subdetails"><li>browsertime-benchmark-firefox-unity-webgl: 1</li><li>browsertime-benchmark-speedometer3-mobile-fenix-nofis: 4</li><li>browsertime-benchmark-speedometer3-mobile-fenix: 2</li><li>browsertime-video-playback-latency-mobile-fenix-vpl-h264: 1</li><li>browsertime-video-playback-latency-mobile-fenix-vpl-vp9: 1</li><li>perftest-android-hw-p6-aarch64-shippable-startup-chrome-m-newssite-applink-startup: 1</li><li>perftest-linux-ml-summarizer-perf-linux1804-64-shippable: 1</li><li>perftest-windows11-24h2-ml-llama-smollm2-smoke: 1</li><li>talos-chrome-no-nv: 1</li><li>talos-g4-swr: 1</li><li>talos-other-no-nv: 3</li><li>talos-pdfpaint-3-swr: 1</li><li>talos-svgr-swr: 1</li><li>talos-webgl-swr: 2</li><li>talos-webgl: 3</li></ul>
           </li>
         
-        <li><b>2d window:</b> <b>8</b> failures</li>
+        <li><b>2d window:</b> <b>4</b> failures</li>
         
           <li>Platforms (2d):
-            <ul class="subdetails"><li>android-hw-p6: 2</li><li>macosx1470: 3</li><li>windows11: 3</li></ul>
+            <ul class="subdetails"><li>macosx1470: 3</li><li>windows11: 1</li></ul>
           </li>
         
         
           <li>Repository Breakdown (2d):
-            <ul class="subdetails"><li>autoland: 4</li><li>mozilla-central: 4</li></ul>
+            <ul class="subdetails"><li>autoland: 3</li><li>mozilla-central: 1</li></ul>
           </li>
         
         
           <li>Suite Breakdown (2d):
-            <ul class="subdetails"><li>browsertime-benchmark-firefox-unity-webgl: 1</li><li>browsertime-benchmark-speedometer3-mobile-fenix-nofis: 1</li><li>browsertime-benchmark-speedometer3-mobile-fenix: 1</li><li>perftest-windows11-24h2-ml-llama-smollm2-smoke: 1</li><li>talos-chrome-no-nv: 1</li><li>talos-other-no-nv: 1</li><li>talos-webgl-swr: 1</li><li>talos-webgl: 1</li></ul>
+            <ul class="subdetails"><li>perftest-windows11-24h2-ml-llama-smollm2-smoke: 1</li><li>talos-chrome-no-nv: 1</li><li>talos-webgl-swr: 1</li><li>talos-webgl: 1</li></ul>
           </li>
         
       </ul>
