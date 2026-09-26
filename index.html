@@ -14,7 +14,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </head><body>
 
 <p style="font-size: 0.9em; color: #666; user-select: none;">
-  Last updated: 2026-09-25 14:16 UTC |
+  Last updated: 2026-09-26 13:27 UTC |
 <a href="https://github.com/92kns/perftest_triage_report/issues" target="_blank" style="font-size: 0.9em;">
   🐞 File an issue on GitHub
 </a>
@@ -25,65 +25,95 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   <h3>Raptor</h3>
   <ul class="buglist">
   
-  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1682027" target="_blank">Bug 1682027 - High frequency |  results.MissingResultsError: Browsertime cycle missing [&#39;paintTiming&#39;, &#39;first-contentful-paint&#39;] measurement / Browsertime cycle missing [&#39;largestContentfulPaint&#39;, &#39;renderTime&#39;] measurement</a>
-    <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-18&amp;endday=2026-09-25&amp;tree=all&amp;bug=1682027" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>27</b> failures (0.3% rate) ↑ &#43;8</li>
-      
-        <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 26</li><li>macosx1470: 1</li></ul>
-        </li>
-      
-      
-        <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 21</li><li>mozilla-central: 6</li></ul>
-        </li>
-      
-      <li><b>2d window:</b> <b>1</b> failures (0.0% rate)</li>
-      
-        <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 1</li></ul>
-        </li>
-      
-      
-        <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 1</li></ul>
-        </li>
-      
-      <li>Opened: 2113 days ago</li>
-      
-      
-    </ul>
-  </li>
-  
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1966101" target="_blank">Bug 1966101 - Intermittent results.MissingResultsError: Browsertime cycle missing [&#39;largestContentfulPaint&#39;, &#39;renderTime&#39;] measurement</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-18&amp;endday=2026-09-25&amp;tree=all&amp;bug=1966101" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>24</b> failures (0.3% rate) 🆕</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-19&amp;endday=2026-09-26&amp;tree=all&amp;bug=1966101" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>26</b> failures (0.3% rate) 🆕</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 23</li><li>linux2404: 1</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 25</li><li>linux2404: 1</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 16</li><li>mozilla-central: 8</li></ul>
+          <ul class="subdetails"><li>autoland: 18</li><li>mozilla-central: 8</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>23</b> failures (0.6% rate)</li>
+      <li><b>2d window:</b> <b>10</b> failures (0.3% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 22</li><li>linux2404: 1</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 9</li><li>linux2404: 1</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 15</li><li>mozilla-central: 8</li></ul>
+          <ul class="subdetails"><li>autoland: 6</li><li>mozilla-central: 4</li></ul>
         </li>
       
       <li>Opened: 500 days ago</li>
       
       
+    </ul>
+  </li>
+  
+  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1682027" target="_blank">Bug 1682027 - High frequency |  results.MissingResultsError: Browsertime cycle missing [&#39;paintTiming&#39;, &#39;first-contentful-paint&#39;] measurement / Browsertime cycle missing [&#39;largestContentfulPaint&#39;, &#39;renderTime&#39;] measurement</a>
+    <ul class="details">
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-19&amp;endday=2026-09-26&amp;tree=all&amp;bug=1682027" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>21</b> failures (0.2% rate) ↑ &#43;1</li>
+      
+        <li>Platforms (7d):
+          <ul class="subdetails"><li>android-hw-a55: 20</li><li>macosx1470: 1</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (7d):
+          <ul class="subdetails"><li>autoland: 17</li><li>mozilla-central: 4</li></ul>
+        </li>
+      
+      
+      
+      
+      <li>Opened: 2114 days ago</li>
+      
+      
+    </ul>
+  </li>
+  
+  </ul>
+</div>
+
+<div class="component-group">
+  <h3>Talos</h3>
+  <ul class="buglist">
+  
+  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2074922" target="_blank">Bug 2074922 - Intermittent Halting on failure while running [&#39;unzip&#39;, &#39;-q&#39;, &#39;-o&#39;, &#39;C:\\Users\\task_179017830374012\\build\\tests\\talos\\talos\\tests\\tp5n.zip&#39;, &#39;-d&#39;, &#39;C:\\Users\\task_179017830374012\\build\\tests\\talos\\talos\\tests&#39;]</a>
+    <ul class="details">
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-19&amp;endday=2026-09-26&amp;tree=all&amp;bug=2074922" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>32</b> failures (0.4% rate) 🆕</li>
+      
+        <li>Platforms (7d):
+          <ul class="subdetails"><li>macosx1500: 1</li><li>windows11: 31</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (7d):
+          <ul class="subdetails"><li>autoland: 25</li><li>mozilla-central: 7</li></ul>
+        </li>
+      
+      <li><b>2d window:</b> <b>28</b> failures (0.8% rate)</li>
+      
+        <li>Platforms (2d):
+          <ul class="subdetails"><li>macosx1500: 1</li><li>windows11: 27</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (2d):
+          <ul class="subdetails"><li>autoland: 21</li><li>mozilla-central: 7</li></ul>
+        </li>
+      
+      <li>Opened: 2 days ago</li>
+      <li><b>Assigned To</b>: jmoss@mozilla.com</li>
+      <li><b>NEEDINFO</b>: jmoss@mozilla.com</li>
     </ul>
   </li>
   
@@ -102,16 +132,16 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <li>
           <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2071660" target="_blank">Bug 2071660 - Perma [tier 2] mozperftest.test.shellscript.ScriptFailedError: applink-startup-navigation-start failed with return code 1: Exception: Failed multiple retries with: Expected to match 1 process start string but matched 0</a>
           <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-18&amp;endday=2026-09-25&amp;tree=all&amp;bug=2071660" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>5</b> failures</li>
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-19&amp;endday=2026-09-26&amp;tree=all&amp;bug=2071660" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><b>7d window:</b> <b>2</b> failures</li>
             
               <li>Platforms (7d):
-                <ul class="subdetails"><li>android-hw-s24: 5</li></ul>
+                <ul class="subdetails"><li>android-hw-s24: 2</li></ul>
               </li>
             
             
               <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>mozilla-central: 5</li></ul>
+                <ul class="subdetails"><li>mozilla-central: 2</li></ul>
               </li>
             
             <li><b>2d window:</b> <b>1</b> failures</li>
@@ -125,7 +155,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
                 <ul class="subdetails"><li>mozilla-central: 1</li></ul>
               </li>
             
-            <li>Opened: 12 days ago</li>
+            <li>Opened: 13 days ago</li>
             
             
           </ul>
@@ -141,31 +171,70 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <li>
           <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2064284" target="_blank">Bug 2064284 - Perma custom-car [taskcluster:error] Uploading error artifact public/build from file public/build with message &#34;Could not read directory | build failed on toolchain/win:win_clang_x64</a>
           <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-18&amp;endday=2026-09-25&amp;tree=all&amp;bug=2064284" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>1</b> failures</li>
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-19&amp;endday=2026-09-26&amp;tree=all&amp;bug=2064284" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><b>7d window:</b> <b>2</b> failures</li>
             
               <li>Platforms (7d):
-                <ul class="subdetails"><li>windows: 1</li></ul>
+                <ul class="subdetails"><li>windows: 2</li></ul>
               </li>
             
             
               <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>mozilla-central: 1</li></ul>
+                <ul class="subdetails"><li>mozilla-central: 2</li></ul>
               </li>
             
-            <li><b>2d window:</b> <b>1</b> failures</li>
+            <li><b>2d window:</b> <b>2</b> failures</li>
             
               <li>Platforms (2d):
-                <ul class="subdetails"><li>windows: 1</li></ul>
+                <ul class="subdetails"><li>windows: 2</li></ul>
               </li>
             
             
               <li>Repository Breakdown (2d):
-                <ul class="subdetails"><li>mozilla-central: 1</li></ul>
+                <ul class="subdetails"><li>mozilla-central: 2</li></ul>
               </li>
             
-            <li>Opened: 38 days ago</li>
+            <li>Opened: 39 days ago</li>
             
+            
+          </ul>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="component-group">
+      <h3>Talos</h3>
+      <ul class="buglist">
+        
+        <li>
+          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2075741" target="_blank">Bug 2075741 - Perma pdfpaint-4 [taskcluster:error] task aborted - max run time exceeded | [taskcluster:error] Aborting task...</a>
+          <ul class="details">
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-19&amp;endday=2026-09-26&amp;tree=all&amp;bug=2075741" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><b>7d window:</b> <b>44</b> failures</li>
+            
+              <li>Platforms (7d):
+                <ul class="subdetails"><li>linux2404: 11</li><li>macosx1470: 13</li><li>macosx1500: 7</li><li>windows11: 13</li></ul>
+              </li>
+            
+            
+              <li>Repository Breakdown (7d):
+                <ul class="subdetails"><li>autoland: 30</li><li>mozilla-central: 14</li></ul>
+              </li>
+            
+            <li><b>2d window:</b> <b>44</b> failures</li>
+            
+              <li>Platforms (2d):
+                <ul class="subdetails"><li>linux2404: 11</li><li>macosx1470: 13</li><li>macosx1500: 7</li><li>windows11: 13</li></ul>
+              </li>
+            
+            
+              <li>Repository Breakdown (2d):
+                <ul class="subdetails"><li>autoland: 30</li><li>mozilla-central: 14</li></ul>
+              </li>
+            
+            <li>Opened: 0 days ago</li>
+            <li><b>Assigned To</b>: ahochheiden@mozilla.com</li>
             
           </ul>
         </li>
@@ -182,37 +251,37 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   <ul class="buglist">
     <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1809667" target="_blank">Bug 1809667 - task-timeout (perf tests only)</a>
       <ul class="details">
-        <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-18&amp;endday=2026-09-25&amp;tree=all&amp;bug=1809667" target="_blank">Orange Factor Graph 📈</a></li>
-        <li><b>7d window:</b> <b>75</b> failures</li>
+        <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-09-19&amp;endday=2026-09-26&amp;tree=all&amp;bug=1809667" target="_blank">Orange Factor Graph 📈</a></li>
+        <li><b>7d window:</b> <b>69</b> failures</li>
         
           <li>Platforms (7d):
-            <ul class="subdetails"><li>android-hw-a55: 5</li><li>android-hw-p6: 8</li><li>linux2404: 10</li><li>macosx1470: 37</li><li>macosx1500: 2</li><li>windows11: 13</li></ul>
+            <ul class="subdetails"><li>android-hw-a55: 5</li><li>android-hw-p6: 6</li><li>linux2404: 13</li><li>macosx1470: 31</li><li>macosx1500: 2</li><li>windows11: 12</li></ul>
           </li>
         
         
           <li>Repository Breakdown (7d):
-            <ul class="subdetails"><li>autoland: 55</li><li>mozilla-central: 20</li></ul>
+            <ul class="subdetails"><li>autoland: 52</li><li>mozilla-central: 17</li></ul>
           </li>
         
         
           <li>Suite Breakdown (7d):
-            <ul class="subdetails"><li>browsertime-benchmark-firefox-assorted-dom: 1</li><li>browsertime-benchmark-firefox-matrix-react-bench: 1</li><li>browsertime-benchmark-firefox-media-capabilities: 1</li><li>browsertime-benchmark-firefox-speedometer3-no-nv: 3</li><li>browsertime-benchmark-firefox-speedometer3: 1</li><li>browsertime-benchmark-firefox-unity-webgl: 2</li><li>browsertime-benchmark-speedometer3-mobile-fenix-nofis: 5</li><li>browsertime-benchmark-speedometer3-mobile-fenix: 3</li><li>browsertime-benchmark-wasm-firefox-wasm-godot: 1</li><li>browsertime-benchmark-wasm-firefox-wasm-misc-baseline: 2</li><li>browsertime-speculation-rules-firefox-prefetch-immediate: 2</li><li>browsertime-speculation-rules-firefox-prefetch-list-conservative: 2</li><li>browsertime-speculation-rules-firefox-prefetch-list-eager: 1</li><li>browsertime-speculation-rules-firefox-prefetch-list-immediate: 1</li><li>browsertime-speculation-rules-firefox-prefetch-list-moderate: 1</li><li>browsertime-speculative-firefox-connect: 1</li><li>browsertime-tp6m-fenix-cnn: 1</li><li>browsertime-tp6m-fenix-ebay-kleinanzeigen-nofis: 1</li><li>browsertime-tp6m-fenix-ebay-kleinanzeigen: 1</li><li>browsertime-tp6m-fenix-imdb: 1</li><li>browsertime-video-playback-latency-mobile-fenix-vpl-h264: 1</li><li>browsertime-webcodecs-firefox-ve-av1-rt-i420: 1</li><li>browsertime-webcodecs-firefox-ve-h264-q-i420: 1</li><li>browsertime-webcodecs-firefox-ve-vp8-rt-i420: 1</li><li>browsertime-webcodecs-firefox-ve-vp9-q: 1</li><li>browsertime-webcodecs-firefox-ve-vp9-rt-i420: 1</li><li>talos-chrome-no-nv: 3</li><li>talos-dromaeojs: 1</li><li>talos-g4-swr: 1</li><li>talos-g4: 6</li><li>talos-other-no-nv: 2</li><li>talos-pdfpaint-4-swr: 1</li><li>talos-pdfpaint-9-swr: 1</li><li>talos-perf-reftest: 1</li><li>talos-svgr-swr: 6</li><li>talos-svgr: 7</li><li>talos-tabswitch: 3</li><li>talos-tp5o: 1</li><li>talos-webgl-swr: 2</li><li>talos-webgl: 2</li></ul>
+            <ul class="subdetails"><li>browsertime-benchmark-firefox-assorted-dom: 1</li><li>browsertime-benchmark-firefox-matrix-react-bench: 1</li><li>browsertime-benchmark-firefox-media-capabilities: 1</li><li>browsertime-benchmark-firefox-speedometer3-no-nv: 3</li><li>browsertime-benchmark-firefox-speedometer3: 1</li><li>browsertime-benchmark-firefox-unity-webgl: 2</li><li>browsertime-benchmark-speedometer3-mobile-fenix-nofis: 5</li><li>browsertime-benchmark-speedometer3-mobile-fenix: 1</li><li>browsertime-benchmark-wasm-firefox-wasm-godot: 1</li><li>browsertime-benchmark-wasm-firefox-wasm-misc-baseline: 2</li><li>browsertime-speculation-rules-firefox-prefetch-immediate: 2</li><li>browsertime-speculation-rules-firefox-prefetch-list-conservative: 2</li><li>browsertime-speculation-rules-firefox-prefetch-list-eager: 1</li><li>browsertime-speculation-rules-firefox-prefetch-list-immediate: 1</li><li>browsertime-speculation-rules-firefox-prefetch-list-moderate: 1</li><li>browsertime-speculative-firefox-connect: 1</li><li>browsertime-tp6m-fenix-cnn: 1</li><li>browsertime-tp6m-fenix-ebay-kleinanzeigen-nofis: 1</li><li>browsertime-tp6m-fenix-ebay-kleinanzeigen: 1</li><li>browsertime-tp6m-fenix-imdb: 1</li><li>browsertime-video-playback-latency-mobile-fenix-vpl-h264: 1</li><li>browsertime-webcodecs-firefox-ve-av1-rt-i420: 1</li><li>browsertime-webcodecs-firefox-ve-h264-q-i420: 1</li><li>browsertime-webcodecs-firefox-ve-vp8-rt-i420: 1</li><li>browsertime-webcodecs-firefox-ve-vp9-q: 1</li><li>browsertime-webcodecs-firefox-ve-vp9-rt-i420: 1</li><li>talos-chrome-no-nv: 1</li><li>talos-g4-swr: 1</li><li>talos-g4: 5</li><li>talos-pdfpaint-4-swr: 1</li><li>talos-pdfpaint-4: 2</li><li>talos-pdfpaint-9-swr: 1</li><li>talos-perf-reftest: 1</li><li>talos-svgr-swr: 5</li><li>talos-svgr: 7</li><li>talos-tabswitch: 3</li><li>talos-tp5o: 1</li><li>talos-webgl-swr: 2</li><li>talos-webgl: 3</li></ul>
           </li>
         
-        <li><b>2d window:</b> <b>21</b> failures</li>
+        <li><b>2d window:</b> <b>13</b> failures</li>
         
           <li>Platforms (2d):
-            <ul class="subdetails"><li>android-hw-a55: 4</li><li>android-hw-p6: 4</li><li>macosx1470: 12</li><li>windows11: 1</li></ul>
+            <ul class="subdetails"><li>android-hw-p6: 2</li><li>linux2404: 3</li><li>macosx1470: 7</li><li>windows11: 1</li></ul>
           </li>
         
         
           <li>Repository Breakdown (2d):
-            <ul class="subdetails"><li>autoland: 15</li><li>mozilla-central: 6</li></ul>
+            <ul class="subdetails"><li>autoland: 10</li><li>mozilla-central: 3</li></ul>
           </li>
         
         
           <li>Suite Breakdown (2d):
-            <ul class="subdetails"><li>browsertime-benchmark-speedometer3-mobile-fenix-nofis: 3</li><li>browsertime-benchmark-speedometer3-mobile-fenix: 1</li><li>browsertime-tp6m-fenix-ebay-kleinanzeigen-nofis: 1</li><li>browsertime-tp6m-fenix-ebay-kleinanzeigen: 1</li><li>browsertime-tp6m-fenix-imdb: 1</li><li>browsertime-video-playback-latency-mobile-fenix-vpl-h264: 1</li><li>browsertime-webcodecs-firefox-ve-vp9-q: 1</li><li>talos-chrome-no-nv: 1</li><li>talos-g4: 1</li><li>talos-pdfpaint-9-swr: 1</li><li>talos-svgr-swr: 3</li><li>talos-svgr: 4</li><li>talos-webgl-swr: 1</li><li>talos-webgl: 1</li></ul>
+            <ul class="subdetails"><li>browsertime-benchmark-speedometer3-mobile-fenix-nofis: 2</li><li>browsertime-webcodecs-firefox-ve-vp9-q: 1</li><li>talos-g4: 1</li><li>talos-pdfpaint-4-swr: 1</li><li>talos-pdfpaint-4: 2</li><li>talos-svgr-swr: 2</li><li>talos-svgr: 2</li><li>talos-webgl: 2</li></ul>
           </li>
         
       </ul>
