@@ -14,7 +14,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </head><body>
 
 <p style="font-size: 0.9em; color: #666; user-select: none;">
-  Last updated: 2026-10-16 13:36 UTC |
+  Last updated: 2026-10-17 12:33 UTC |
 <a href="https://github.com/92kns/perftest_triage_report/issues" target="_blank" style="font-size: 0.9em;">
   🐞 File an issue on GitHub
 </a>
@@ -27,30 +27,61 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
   
   <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1966101" target="_blank">Bug 1966101 - Intermittent results.MissingResultsError: Browsertime cycle missing [&#39;largestContentfulPaint&#39;, &#39;renderTime&#39;] measurement</a>
     <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-10-09&amp;endday=2026-10-16&amp;tree=all&amp;bug=1966101" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>55</b> failures (0.6% rate) ↓ -8</li>
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-10-10&amp;endday=2026-10-17&amp;tree=all&amp;bug=1966101" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>51</b> failures (0.6% rate) ↓ -11</li>
       
         <li>Platforms (7d):
-          <ul class="subdetails"><li>android-hw-a55: 55</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 51</li></ul>
         </li>
       
       
         <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 42</li><li>mozilla-central: 13</li></ul>
+          <ul class="subdetails"><li>autoland: 42</li><li>mozilla-central: 9</li></ul>
         </li>
       
-      <li><b>2d window:</b> <b>23</b> failures (0.6% rate)</li>
+      <li><b>2d window:</b> <b>18</b> failures (0.5% rate)</li>
       
         <li>Platforms (2d):
-          <ul class="subdetails"><li>android-hw-a55: 23</li></ul>
+          <ul class="subdetails"><li>android-hw-a55: 18</li></ul>
         </li>
       
       
         <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 19</li><li>mozilla-central: 4</li></ul>
+          <ul class="subdetails"><li>autoland: 17</li><li>mozilla-central: 1</li></ul>
         </li>
       
-      <li>Opened: 520 days ago</li>
+      <li>Opened: 521 days ago</li>
+      
+      
+    </ul>
+  </li>
+  
+  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1795826" target="_blank">Bug 1795826 - Intermittent raptor-browsertime Error: Browsertime failed to run</a>
+    <ul class="details">
+      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-10-10&amp;endday=2026-10-17&amp;tree=all&amp;bug=1795826" target="_blank">Orange Factor Graph 📈</a></li>
+      <li><b>7d window:</b> <b>25</b> failures (0.3% rate) ↑ &#43;18</li>
+      
+        <li>Platforms (7d):
+          <ul class="subdetails"><li>android-hw-a55: 1</li><li>android-hw-p6: 6</li><li>android-hw-s24: 5</li><li>linux2404: 9</li><li>macosx1470: 3</li><li>windows11: 1</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (7d):
+          <ul class="subdetails"><li>mozilla-central: 24</li><li>mozilla-release: 1</li></ul>
+        </li>
+      
+      <li><b>2d window:</b> <b>17</b> failures (0.5% rate)</li>
+      
+        <li>Platforms (2d):
+          <ul class="subdetails"><li>android-hw-p6: 4</li><li>android-hw-s24: 5</li><li>linux2404: 8</li></ul>
+        </li>
+      
+      
+        <li>Repository Breakdown (2d):
+          <ul class="subdetails"><li>mozilla-central: 17</li></ul>
+        </li>
+      
+      <li>Opened: 1460 days ago</li>
       
       
     </ul>
@@ -60,42 +91,6 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </div>
 
 
-
-  <div class="section">
-    <h2>🟥 Perma Failures</h2>
-    
-    <div class="component-group">
-      <h3>mozperftest</h3>
-      <ul class="buglist">
-        
-        <li>
-          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2071660" target="_blank">Bug 2071660 - Perma [tier 2] mozperftest.test.shellscript.ScriptFailedError: applink-startup-navigation-start failed with return code 1: Exception: Failed multiple retries with: Expected to match 1 process start string but matched 0</a>
-          <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-10-09&amp;endday=2026-10-16&amp;tree=all&amp;bug=2071660" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>1</b> failures</li>
-            
-              <li>Platforms (7d):
-                <ul class="subdetails"><li>android-hw-s24: 1</li></ul>
-              </li>
-            
-            
-              <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>mozilla-central: 1</li></ul>
-              </li>
-            
-            
-            
-            
-            <li>Opened: 33 days ago</li>
-            
-            <li><b>NEEDINFO</b>: aglavic@mozilla.com</li>
-          </ul>
-        </li>
-        
-      </ul>
-    </div>
-    
-  </div>
 
 
 
