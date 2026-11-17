@@ -14,50 +14,12 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
 </head><body>
 
 <p style="font-size: 0.9em; color: #666; user-select: none;">
-  Last updated: 2026-11-16 19:00 UTC |
+  Last updated: 2026-11-17 17:58 UTC |
 <a href="https://github.com/92kns/perftest_triage_report/issues" target="_blank" style="font-size: 0.9em;">
   🐞 File an issue on GitHub
 </a>
 </p>
 <h2>🟧 Intermittent Failures</h2>
-
-<div class="component-group">
-  <h3>Raptor</h3>
-  <ul class="buglist">
-  
-  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1795826" target="_blank">Bug 1795826 - Intermittent raptor-browsertime Error: Browsertime failed to run</a>
-    <ul class="details">
-      <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-09&amp;endday=2026-11-16&amp;tree=all&amp;bug=1795826" target="_blank">Orange Factor Graph 📈</a></li>
-      <li><b>7d window:</b> <b>20</b> failures (0.2% rate) ↓ -6</li>
-      
-        <li>Platforms (7d):
-          <ul class="subdetails"><li>android-em-14: 3</li><li>android-hw-a55: 16</li><li>android-hw-s24: 1</li></ul>
-        </li>
-      
-      
-        <li>Repository Breakdown (7d):
-          <ul class="subdetails"><li>autoland: 3</li><li>mozilla-central: 17</li></ul>
-        </li>
-      
-      <li><b>2d window:</b> <b>3</b> failures (0.1% rate)</li>
-      
-        <li>Platforms (2d):
-          <ul class="subdetails"><li>android-em-14: 1</li><li>android-hw-a55: 2</li></ul>
-        </li>
-      
-      
-        <li>Repository Breakdown (2d):
-          <ul class="subdetails"><li>autoland: 1</li><li>mozilla-central: 2</li></ul>
-        </li>
-      
-      <li>Opened: 1490 days ago</li>
-      
-      
-    </ul>
-  </li>
-  
-  </ul>
-</div>
 
 
 
@@ -71,7 +33,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <li>
           <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2071660" target="_blank">Bug 2071660 - Perma [tier 2] mozperftest.test.shellscript.ScriptFailedError: applink-startup-navigation-start failed with return code 1: Exception: Failed multiple retries with: Expected to match 1 process start string but matched 0</a>
           <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-09&amp;endday=2026-11-16&amp;tree=all&amp;bug=2071660" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-10&amp;endday=2026-11-17&amp;tree=all&amp;bug=2071660" target="_blank">Orange Factor Graph 📈</a></li>
             <li><b>7d window:</b> <b>5</b> failures</li>
             
               <li>Platforms (7d):
@@ -81,70 +43,6 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
             
               <li>Repository Breakdown (7d):
                 <ul class="subdetails"><li>autoland: 1</li><li>mozilla-central: 4</li></ul>
-              </li>
-            
-            <li><b>2d window:</b> <b>2</b> failures</li>
-            
-              <li>Platforms (2d):
-                <ul class="subdetails"><li>android-hw-s24: 2</li></ul>
-              </li>
-            
-            
-              <li>Repository Breakdown (2d):
-                <ul class="subdetails"><li>mozilla-central: 2</li></ul>
-              </li>
-            
-            <li>Opened: 64 days ago</li>
-            <li><b>Assigned To</b>: aglavic@mozilla.com</li>
-            
-          </ul>
-        </li>
-        
-        <li>
-          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2074915" target="_blank">Bug 2074915 - Perma [tier 2] mozperftest.test.shellscript.ScriptFailedError: newssite-applink-startup failed with return code 1: __main__.InvalidLastFrame: Difference in Images is too high, suspected faulty run</a>
-          <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-09&amp;endday=2026-11-16&amp;tree=all&amp;bug=2074915" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>13</b> failures</li>
-            
-              <li>Platforms (7d):
-                <ul class="subdetails"><li>android-hw-s24: 8</li><li>android: 5</li></ul>
-              </li>
-            
-            
-              <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>autoland: 5</li><li>mozilla-central: 8</li></ul>
-              </li>
-            
-            <li><b>2d window:</b> <b>7</b> failures</li>
-            
-              <li>Platforms (2d):
-                <ul class="subdetails"><li>android-hw-s24: 5</li><li>android: 2</li></ul>
-              </li>
-            
-            
-              <li>Repository Breakdown (2d):
-                <ul class="subdetails"><li>autoland: 2</li><li>mozilla-central: 5</li></ul>
-              </li>
-            
-            <li>Opened: 54 days ago</li>
-            
-            <li><b>NEEDINFO</b>: afinder@mozilla.com</li>
-          </ul>
-        </li>
-        
-        <li>
-          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2075513" target="_blank">Bug 2075513 - Perma [tier2] mozperftest.test.shellscript.ScriptFailedError: tab-restore-newssite failed with return code 1: __main__.InvalidLastFrame: Difference in Images is too high, suspected faulty run</a>
-          <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-09&amp;endday=2026-11-16&amp;tree=all&amp;bug=2075513" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>4</b> failures</li>
-            
-              <li>Platforms (7d):
-                <ul class="subdetails"><li>android-hw-s24: 4</li></ul>
-              </li>
-            
-            
-              <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>mozilla-central: 4</li></ul>
               </li>
             
             <li><b>2d window:</b> <b>1</b> failures</li>
@@ -158,7 +56,71 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
                 <ul class="subdetails"><li>mozilla-central: 1</li></ul>
               </li>
             
-            <li>Opened: 52 days ago</li>
+            <li>Opened: 65 days ago</li>
+            <li><b>Assigned To</b>: aglavic@mozilla.com</li>
+            
+          </ul>
+        </li>
+        
+        <li>
+          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2074915" target="_blank">Bug 2074915 - Perma [tier 2] mozperftest.test.shellscript.ScriptFailedError: newssite-applink-startup failed with return code 1: __main__.InvalidLastFrame: Difference in Images is too high, suspected faulty run</a>
+          <ul class="details">
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-10&amp;endday=2026-11-17&amp;tree=all&amp;bug=2074915" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><b>7d window:</b> <b>14</b> failures</li>
+            
+              <li>Platforms (7d):
+                <ul class="subdetails"><li>android-hw-s24: 9</li><li>android: 5</li></ul>
+              </li>
+            
+            
+              <li>Repository Breakdown (7d):
+                <ul class="subdetails"><li>autoland: 5</li><li>mozilla-central: 9</li></ul>
+              </li>
+            
+            <li><b>2d window:</b> <b>4</b> failures</li>
+            
+              <li>Platforms (2d):
+                <ul class="subdetails"><li>android-hw-s24: 2</li><li>android: 2</li></ul>
+              </li>
+            
+            
+              <li>Repository Breakdown (2d):
+                <ul class="subdetails"><li>autoland: 2</li><li>mozilla-central: 2</li></ul>
+              </li>
+            
+            <li>Opened: 55 days ago</li>
+            
+            <li><b>NEEDINFO</b>: afinder@mozilla.com</li>
+          </ul>
+        </li>
+        
+        <li>
+          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2075513" target="_blank">Bug 2075513 - Perma [tier2] mozperftest.test.shellscript.ScriptFailedError: tab-restore-newssite failed with return code 1: __main__.InvalidLastFrame: Difference in Images is too high, suspected faulty run</a>
+          <ul class="details">
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-10&amp;endday=2026-11-17&amp;tree=all&amp;bug=2075513" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><b>7d window:</b> <b>5</b> failures</li>
+            
+              <li>Platforms (7d):
+                <ul class="subdetails"><li>android-hw-s24: 5</li></ul>
+              </li>
+            
+            
+              <li>Repository Breakdown (7d):
+                <ul class="subdetails"><li>mozilla-central: 5</li></ul>
+              </li>
+            
+            <li><b>2d window:</b> <b>1</b> failures</li>
+            
+              <li>Platforms (2d):
+                <ul class="subdetails"><li>android-hw-s24: 1</li></ul>
+              </li>
+            
+            
+              <li>Repository Breakdown (2d):
+                <ul class="subdetails"><li>mozilla-central: 1</li></ul>
+              </li>
+            
+            <li>Opened: 53 days ago</li>
             
             <li><b>NEEDINFO</b>: aglavic@mozilla.com</li>
           </ul>
@@ -167,16 +129,16 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <li>
           <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2088754" target="_blank">Bug 2088754 - Perma mozperftest.test.shellscript.ScriptFailedError: shopify-applink-startup failed with return code 1: __main__.InvalidLastFrame: Difference in Images is too high, suspected faulty run</a>
           <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-09&amp;endday=2026-11-16&amp;tree=all&amp;bug=2088754" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>15</b> failures</li>
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-10&amp;endday=2026-11-17&amp;tree=all&amp;bug=2088754" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><b>7d window:</b> <b>17</b> failures</li>
             
               <li>Platforms (7d):
-                <ul class="subdetails"><li>android-hw-a55: 15</li></ul>
+                <ul class="subdetails"><li>android-hw-a55: 17</li></ul>
               </li>
             
             
               <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>mozilla-central: 15</li></ul>
+                <ul class="subdetails"><li>mozilla-central: 17</li></ul>
               </li>
             
             <li><b>2d window:</b> <b>4</b> failures</li>
@@ -190,7 +152,7 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
                 <ul class="subdetails"><li>mozilla-central: 4</li></ul>
               </li>
             
-            <li>Opened: 12 days ago</li>
+            <li>Opened: 13 days ago</li>
             
             <li><b>NEEDINFO</b>: aglavic@mozilla.com</li>
           </ul>
@@ -206,27 +168,27 @@ ul.subdetails { list-style: square; padding-left: 2em; margin: 0; }
         <li>
           <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2039991" target="_blank">Bug 2039991 - Perma fenix ytp Exception: Failed waiting on page https://prod.youtube-test.prod.webservices.mozgcp.net/main.html?test_type=playbackperf-hfr-test&amp;tests=6&amp;raptor=true&amp;exclude=1,2&amp;muted=true&amp;command=run to finished loading, timed out after 120000 ms</a>
           <ul class="details">
-            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-09&amp;endday=2026-11-16&amp;tree=all&amp;bug=2039991" target="_blank">Orange Factor Graph 📈</a></li>
-            <li><b>7d window:</b> <b>56</b> failures</li>
+            <li><a href="https://treeherder.mozilla.org/intermittent-failures/bugdetails?startday=2026-11-10&amp;endday=2026-11-17&amp;tree=all&amp;bug=2039991" target="_blank">Orange Factor Graph 📈</a></li>
+            <li><b>7d window:</b> <b>62</b> failures</li>
             
               <li>Platforms (7d):
-                <ul class="subdetails"><li>android-em-14: 1</li><li>android-hw-a55: 54</li><li>android-hw-s24: 1</li></ul>
+                <ul class="subdetails"><li>android-em-14: 1</li><li>android-hw-a55: 60</li><li>android-hw-s24: 1</li></ul>
               </li>
             
             
               <li>Repository Breakdown (7d):
-                <ul class="subdetails"><li>mozilla-central: 56</li></ul>
+                <ul class="subdetails"><li>mozilla-central: 62</li></ul>
               </li>
             
-            <li><b>2d window:</b> <b>11</b> failures</li>
+            <li><b>2d window:</b> <b>18</b> failures</li>
             
               <li>Platforms (2d):
-                <ul class="subdetails"><li>android-hw-a55: 11</li></ul>
+                <ul class="subdetails"><li>android-hw-a55: 18</li></ul>
               </li>
             
             
               <li>Repository Breakdown (2d):
-                <ul class="subdetails"><li>mozilla-central: 11</li></ul>
+                <ul class="subdetails"><li>mozilla-central: 18</li></ul>
               </li>
             
             <li>Opened: 185 days ago</li>
